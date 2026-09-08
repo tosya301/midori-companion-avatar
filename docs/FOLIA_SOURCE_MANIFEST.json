@@ -114,7 +114,8 @@
     "unique_notice_files": 1011,
     "installed_packages_without_notice_files": 51,
     "uninstalled_optional_platform_packages": 88,
-    "media_rights": "Retained full-asset local candidate only; exact artwork attribution and redistribution permissions remain unresolved",
+    "media_rights": "Maintainer confirmed all supplied-media public redistribution permissions on 2026-09-08; not an independent legal audit, endorsement or blanket downstream sublicense",
+    "maintainer_confirmed_media_redistribution": true,
     "legal_clearance": false,
     "dependency_inventory_is_complete_runtime_corresponding_source_audit": false
   },
@@ -153,17 +154,17 @@
     "symlinks_allowed": false,
     "includes_dependency_metadata_and_full_retained_project_source": true
   },
-  "generated_at_utc": "2026-09-08T16:33:22.875257+00:00",
+  "generated_at_utc": "2026-09-08T17:22:55.617097+00:00",
   "source_payload": [
     {
       "path": "docs/FOLIA_BUILD.md",
-      "bytes": 11858,
-      "sha256": "10a243eaa605ad0f440e306d1eb068f50451f044fce1e6e7f5fbfd5943178bf7"
+      "bytes": 11912,
+      "sha256": "821c228025c67cd931d301f2ee5428e13541128196b40fb984f0c376bce02996"
     },
     {
       "path": "lyrics-stage/THIRD_PARTY.md",
-      "bytes": 5281,
-      "sha256": "eca0c86e94abf59ae465e7509041443bf82e3c709edfd79b927b6549672b95a9"
+      "bytes": 5282,
+      "sha256": "62a5b6995b3cf37b57bff6848f2f32b1955c46b8855c18f9d730f229234e2158"
     },
     {
       "path": "lyrics-stage/licenses/folia-AGPL-3.0.txt",
@@ -10905,6 +10906,6 @@
     "payload_files_excluding_manifest": 2038,
     "archive_files": 2039,
     "deployed_files": 105,
-    "source_payload_bytes_excluding_manifest": 29972387
+    "source_payload_bytes_excluding_manifest": 29972442
   }
 }

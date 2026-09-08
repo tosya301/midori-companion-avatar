@@ -63,21 +63,21 @@ lockfile records their pinned resolutions. Upstream dependencies may impose
 additional obligations; this candidate does not certify exhaustive license
 compatibility or complete source compliance for every bundled dependency.
 
-## Character artwork and other media: separate, unresolved rights
+## Character artwork and other media: separate, maintainer-confirmed permission
 
-This is a **local full-asset candidate, not a cleared public release**. Supplied
-Mingqian Nailv / 明前奶绿 character artwork and related Cappella images are
-credited to Mingqian Nailv / 明前奶绿 and their respective creators/rightsholders.
-Other character art, icons, photographs, stock assets and preview media remain
-with their respective owners. Exact original illustrators and redistribution
-permissions have not all been established. User supply, local possession,
-credit, fan intent and an AGPL/MIT code license are **not** proof of permission
-to redistribute the images. No official authorization or endorsement is claimed.
+The maintainer confirmed on 2026-09-08 that all permissions required for this
+complete public distribution of supplied media have been obtained. This records
+the maintainer's confirmation, not independent legal review or official
+endorsement. Supplied Mingqian Nailv / 明前奶绿 character artwork and related
+Cappella images are credited to Mingqian Nailv / 明前奶绿 and their respective
+creators/rightsholders. Other art, icons, photographs and media remain with
+their respective owners; their rights are not transferred to this project.
 
-The full images are deliberately retained for the requested local candidate.
-Before publishing the repository, downloadable source archive or built assets,
-resolve the artwork/media permissions and remaining dependency-license questions.
+The full images are retained for the authorized public preview. Media permission
+does not relicense those images under MIT/AGPL or waive third-party dependency
+obligations. New media require a separate permission check. See `ASSET_RIGHTS.md`
+in the complete host distribution for the scope of the maintainer declaration.
 The project's noncommercial fan intention is a description of intent, **not** a
 new noncommercial restriction on MIT- or AGPL-licensed code. Music, lyric text,
 album art and remotely loaded content retain their own rights and service terms.
-No publication, account action or upload was performed in preparing this source.
+Preparing this source archive does not itself publish it or contact accounts.

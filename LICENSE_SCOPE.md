@@ -10,4 +10,4 @@ This is a mixed-license distribution, not a blanket MIT license for everything.
 
 The creator's noncommercial fan-project intent is not an extra noncommercial restriction on MIT or AGPL code. Third-party service terms, trademark rights and personality/voice rights remain separate.
 
-This local candidate retains full artwork for review. It does not assert that redistribution of every asset has been cleared. Do not publish until that boundary has been resolved.
+For this public preview, the maintainer confirmed on 2026-09-08 that the permissions required to redistribute all supplied media have been obtained. This records the maintainer's confirmation, not an independent legal audit, an official endorsement, or a blanket sublicense to downstream users. See `ASSET_RIGHTS.md`; applicable third-party license obligations remain in force.

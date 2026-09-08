@@ -1,5 +1,5 @@
 {
-  "scope": "Payload present in successful clean-room test; hashes are not a claim of individual upstream file test coverage. Integration-map test was added and passed separately. Packaging script/attributes and packaging regression test were subsequently checked by the real packaging regression and release/restore checks.",
+  "scope": "Payload present in successful clean-room test; hashes are not a claim of individual upstream file test coverage. Integration-map test was added and passed separately. Packaging script/attributes and packaging regression test were subsequently checked by the real packaging regression and release/restore checks. Public preview changed only release/license documentation, package version, source-offer metadata/archive and packaging scope; source integrity and Python/JS tests passed again. Runtime and visual assets are unchanged.",
   "files": [
     {
       "path": ".gitattributes",
@@ -527,7 +527,7 @@
     },
     {
       "path": "docs/FOLIA_SOURCE_MANIFEST.json",
-      "sha256": "60d70184d4c130287843faac8504e8fafd534fd5ee818a87291e295bd00d0f08"
+      "sha256": "9394f6d88d13983365b9e0599bfb2066cc7abc2416ab472b358d599bd3745b60"
     },
     {
       "path": "docs/app-integrations.json",
@@ -4787,11 +4787,11 @@
     },
     {
       "path": "package-lock.json",
-      "sha256": "7da94b9cbfcdcc661debc99ee6e8ec8cb5e902a666c0fac303e6d5088773ea9b"
+      "sha256": "57b3b3ee0bbab6c79245ee02812b8798753b127d8be58e7e6875af44b972d01e"
     },
     {
       "path": "package.json",
-      "sha256": "7857c585c82c55f72d46423fd87ecd723633d83ab32f1e81146369ade2474d14"
+      "sha256": "197266b3d46243299dc00a8226956e980a97c6cc034776c5c83f33953b789eb3"
     },
     {
       "path": "public-api.js",
@@ -4803,7 +4803,7 @@
     },
     {
       "path": "scripts/package_release.py",
-      "sha256": "bc7f039805cfe4ddd0c2b10a11f849d303b79a2a6dc0c05ba588e23c6e1691e5"
+      "sha256": "426ec9047f2a73eb76215e5088fc9421ac6ac3c3e98e1881c66c854ce92749ae"
     },
     {
       "path": "server.py",
@@ -4811,7 +4811,7 @@
     },
     {
       "path": "source/folia-source.zip",
-      "sha256": "d212ee8b74adefe0012cf352cf25ca4b0ef1771f09fa375ea9537952cee6738c"
+      "sha256": "86233c8b4dc08613db32fd8af00acdd65b8464c3b692c738f93c214315c46d3e"
     },
     {
       "path": "spotify-lyrics-stage.js",

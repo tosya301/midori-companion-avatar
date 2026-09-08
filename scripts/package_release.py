@@ -51,7 +51,7 @@ def package(output):
             raise SystemExit(f'Only regular files can be packaged: {name}')
         data = local.read_bytes()
         manifest.append({'path': name, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
-    packet = {'revision': revision, 'files': manifest, 'file_count': len(manifest), 'scope': 'Local public candidate; asset redistribution rights not cleared by this archive.'}
+    packet = {'revision': revision, 'files': manifest, 'file_count': len(manifest), 'scope': 'Public preview; supplied-media redistribution permission confirmed by maintainer. Code and media retain their respective license scopes.'}
     output.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(output, 'x', zipfile.ZIP_DEFLATED, compresslevel=6) as z:
         for entry in manifest:

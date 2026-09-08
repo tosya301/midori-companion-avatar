@@ -9,12 +9,13 @@ The ZIP preserves this relative layout under `folia-source/`, including this
 document, the machine-readable manifest and license notices. No private Git
 history, patch replay, credentials or developer-host symlinks are required.
 
-**This remains a local full-asset candidate, not a rights-cleared public release.**
-Folia's AGPL-3.0 code license and Tim's Original-renderer MIT license do not grant
-rights to character artwork, music, lyrics, album covers or other media. The
-supplied artwork is deliberately retained, not replaced with placeholders.
-Resolve media permissions and remaining dependency obligations before publishing
-both source and compiled assets. See [THIRD_PARTY.md](../lyrics-stage/THIRD_PARTY.md).
+**Full-asset public preview; supplied-media permission is maintainer-confirmed.**
+On 2026-09-08 the maintainer confirmed the permissions required to publicly
+redistribute all supplied media and authorized the complete release. This is a
+maintainer declaration, not an independent legal audit or official endorsement.
+Folia's AGPL-3.0 and Original's MIT license do not themselves grant media rights
+or override dependency obligations. Artwork is retained, not replaced with
+placeholders. See [THIRD_PARTY.md](../lyrics-stage/THIRD_PARTY.md).
 
 ## Provenance and source selection
 
