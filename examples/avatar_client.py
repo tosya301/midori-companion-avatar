@@ -94,8 +94,8 @@ class AvatarClient:
     def message(self, text, request_id=None):
         return self.request('/api/message', self.with_id({'text': text}, request_id))
 
-    def audio(self, data, format='wav', text='', request_id=None):
-        return self.request('/api/audio', self.with_id({'audio_base64': base64.b64encode(data).decode(), 'format': format, 'text': text}, request_id))
+    def audio(self, data, format='wav', text='', request_id=None, audio_kind='speech'):
+        return self.request('/api/audio', self.with_id({'audio_base64': base64.b64encode(data).decode(), 'format': format, 'text': text, 'audio_kind': audio_kind}, request_id))
 
     def speak(self, text, request_id=None):
         return self.request('/api/speak', self.with_id({'text': text}, request_id))
@@ -107,7 +107,7 @@ class AvatarClient:
         return self.request('/api/lyrics/state', state)
 
     def demo(self, request_id=None):
-        return self.audio(demo_tone(), 'wav', DEMO_TEXT, request_id)
+        return self.audio(demo_tone(), 'wav', DEMO_TEXT, request_id, audio_kind='test')
 
 
 def demo_tone():

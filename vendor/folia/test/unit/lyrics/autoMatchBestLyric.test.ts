@@ -53,6 +53,39 @@ describe('autoMatchBestLyric', () => {
         fetchAmllDbLyricsMock.mockResolvedValue(null);
     });
 
+    it('suppresses every automatic provider in local audition without changing normal callers', async () => {
+        vi.stubGlobal('window', { parent: {}, location: { search: '?lyricStage=1&localAudition=1' } });
+        try {
+            expect(await autoMatchBestLyric('Song Title', 'Artist Name', 200000)).toBeNull();
+            expect(searchQQLyricsMock).not.toHaveBeenCalled();
+            expect(cloudSearchMock).not.toHaveBeenCalled();
+            expect(searchKugouLyricsMock).not.toHaveBeenCalled();
+            expect(fetchAmllDbLyricsMock).not.toHaveBeenCalled();
+        } finally { vi.unstubAllGlobals(); }
+    });
+
+    it('does not start a provider for an already-cancelled operation', async () => {
+        const abort = new AbortController();
+        abort.abort();
+        expect(await autoMatchBestLyric('Song Title', 'Artist Name', 200000, { signal: abort.signal })).toBeNull();
+        expect(searchQQLyricsMock).not.toHaveBeenCalled();
+        expect(cloudSearchMock).not.toHaveBeenCalled();
+    });
+
+    it('stops the provider chain when cancelled during a search', async () => {
+        const abort = new AbortController();
+        let resolve!: (value: any[]) => void;
+        searchQQLyricsMock.mockImplementation(() => new Promise(r => { resolve = r; }));
+        const result = autoMatchBestLyric('Song Title', 'Artist Name', 200000, { preferredSource: 'qq', signal: abort.signal });
+        abort.abort();
+        resolve([{ id: 201, name: 'Song Title', artists: [{ name: 'Artist Name' }], durationMs: 200000 }]);
+        expect(await result).toBeNull();
+        expect(fetchQQLyricsMock).not.toHaveBeenCalled();
+        expect(cloudSearchMock).not.toHaveBeenCalled();
+        expect(fetchAmllDbLyricsMock).not.toHaveBeenCalled();
+        expect(searchKugouLyricsMock).not.toHaveBeenCalled();
+    });
+
     it('tries the default QQ preference before a prefetched NetEase word-by-word candidate', async () => {
         const neteaseSong = {
             id: 101,

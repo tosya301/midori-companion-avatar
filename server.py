@@ -43,7 +43,8 @@ PROVIDER_DEADLINE = 30
 MIME = {'wav': 'audio/wav', 'mp3': 'audio/mpeg', 'ogg': 'audio/ogg', 'm4a': 'audio/mp4'}
 STATIC_FILES = {'index.html', 'app.js', 'styles.css', 'spotify-lyrics-stage.js',
                 'public-api.js', 'audio/demo-tone.wav', 'source/folia-source.zip',
-                'audio/test-voice-human-01.wav', 'audio/test-voice-human-02.wav', 'audio/samples.json',
+                'audio/local-audition/nai-nai-ina.ogg',
+                'audio/test-voice-human-01.wav', 'audio/test-voice-human-02.wav', 'audio/test-voice-human-03.mp3', 'audio/samples.json',
                 'moon.js', 'moon-renderer.js', 'help.html', 'favicon.ico'}
 STATIC_DIRS = {'assets', 'moon', 'lyrics-stage', 'help'}
 STATIC_EXTENSIONS = {'.html', '.css', '.js', '.mjs', '.json', '.png', '.jpg', '.jpeg',
@@ -364,7 +365,7 @@ class Runtime:
         finally:
             self.providers.release()
 
-    def speech(self, data, fmt, text, generation):
+    def speech(self, data, fmt, text, generation, audio_kind='speech'):
         with self.cv:
             if generation != self.stop_generation:
                 raise APIError(409, 'Speech was stopped before publication', 'stopped')
@@ -373,7 +374,7 @@ class Runtime:
             self.prune()
             return self.publish('speech', {'audio_url': '/media/' + name, 'text': text,
                                           'created_at': dt.datetime.now(dt.timezone.utc).isoformat(),
-                                          'source': 'public-api', 'emotion': 'neutral', 'visual_state': ''})
+                                          'source': 'public-api', 'audio_kind': audio_kind, 'emotion': 'neutral', 'visual_state': ''})
 
     def action(self, path, body):
         if path == '/api/message':
@@ -387,6 +388,9 @@ class Runtime:
         with self.cv:
             generation = self.stop_generation
         if path == '/api/audio':
+            audio_kind = body.get('audio_kind', 'unknown')
+            if audio_kind not in ('speech', 'test', 'music', 'unknown'):
+                raise APIError(400, 'audio_kind must be speech, test, music, or unknown')
             fmt = body.get('format')
             if not isinstance(fmt, str) or fmt not in MIME:
                 raise APIError(400, 'format must be wav, mp3, ogg, or m4a')
@@ -400,7 +404,8 @@ class Runtime:
             audio_format(data, fmt)
         else:
             data, fmt = self.tts(text)
-        return {'ok': True, **self.speech(data, fmt, text, generation)}
+            audio_kind = 'speech'
+        return {'ok': True, **self.speech(data, fmt, text, generation, audio_kind)}
 
 
 class PublicServer(http.server.ThreadingHTTPServer):

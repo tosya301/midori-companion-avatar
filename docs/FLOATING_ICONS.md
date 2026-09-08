@@ -46,6 +46,11 @@
 ### Spotify · `spotify`
 
 - 现状：网站入口 + context 接缝；无账户适配器；context：`spotify`；网站：[https://open.spotify.com/](https://open.spotify.com/)。
+- 点击图标下方文字：选择 Spotify Context；尚未关闭自动提示、也未收到成功 connected 音乐状态时，会询问是否试听 Ina cover。大图标仍只打开网站。
+- 自动提示会在本地音频实际开始播放、点击「不再提示」，或页面收到成功 `connected` 音乐状态后关闭；暂停状态也算连接。取消、Escape 或未成功播放不会关闭后续提示。偏好按 origin 保存在 `localStorage`；清除站点数据重置，禁用存储时仅当前页面有效。
+- 手动试听：打开「调试信息 → 本地音乐试听」。此入口独立于 Agent 语音入门区，即使自动提示已关闭或音乐已连接也能重开。音源在本地，不需要 Agent、Spotify 账号或 TTS；日文歌词从 LRCLib 联网获取，使用 Ina 原视频字幕的 49 句时间轴，非逐字跟唱。
+- 本地试听有暂停、停止、进度和音量控制；退出 Spotify Context 或开始语音播放会结束试听。示例不代表账号音乐，也不授予任何账户权限。
+- Agent 端配置音乐不会自动同步；适配器需提交 `POST /api/lyrics/state`，页面收到状态才会反映连接。`connected` 是显示状态，不是 Spotify 授权证明。
 - 用户侧接入：用户自有 Spotify 授权和播放设备；播放控制由用户 agent 执行，歌词显示不需要 Spotify 登录。
 - 安全验证：先用自造歌词状态验证本地显示；账户适配后只读查询当前播放。
 - 尚缺：账户读取/播放控制适配器；用户授权后才控制设备。

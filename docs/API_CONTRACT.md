@@ -21,7 +21,7 @@ This documents `server.py`, not the private runtime. Python 3.10+ standard libra
 | GET `/health` | Liveness | `{"ok":true,"runtime":"midori-public","version":1}` |
 | GET `/api/capabilities` | Safe configuration flags; no keys or adapter URLs | See below |
 | POST `/api/message` | Required `text`; optional `request_id` | 200, publishes `message` |
-| POST `/api/audio` | Required `format`, `audio_base64`; optional `text`, `request_id` | 200, stores media and publishes `speech` |
+| POST `/api/audio` | Required `format`, `audio_base64`; optional `text`, `request_id`, `audio_kind` | 200, stores media and publishes `speech` |
 | POST `/api/speak` | Required `text`; optional `request_id` | 200, configured TTS then `speech`; 503 if unconfigured |
 | POST `/api/stop` | Object, optionally `request_id` | 200, publishes `stop`, invalidates earlier speech generation |
 | GET `/api/requests/<id>` | Bearer-only status of the four preceding idempotent routes | 200 status, or 404 `unknown_request` |
@@ -46,12 +46,26 @@ A message request is `{"text":"Final user-visible text","request_id":"turn-42-te
 Audio upload example (replace the placeholder with strict standard base64, no data-URL prefix):
 
 ```json
-{"format":"wav","audio_base64":"<base64 of audio bytes>","text":"Optional final caption","request_id":"turn-42-audio"}
+{"format":"wav","audio_base64":"<base64 of audio bytes>","audio_kind":"speech","text":"Optional final caption","request_id":"turn-42-audio"}
 ```
 
 Audio accepts `wav`, `mp3`, `ogg`, or `m4a`, matching the actual container signature, maximum 8388608 decoded bytes. WAV must be readable PCM with nonempty complete frame data, 1–8 channels, and 8000–192000 Hz. Compressed formats receive container-signature checks, **not full codec decoding or a playability guarantee**. `audio_url`, local file paths, remote URLs, and provider overrides are not upload sources. The server never fetches a per-request audio URL or reads a per-request file.
 
 Both `/api/audio` and `/api/speak` return this shape (illustrative values):
+
+`audio_kind` is `speech`, `test`, `music`, or `unknown`. Raw `/api/audio` defaults
+to `unknown`; it does not prevent playback. TTS-generated speech is `speech`.
+The helper's `audio` defaults to `speech`, while `demo` explicitly uses `test`.
+This is caller-declared provenance, not audio-content classification. The UI
+collapses onboarding only after successful fresh speech playback; tests, music,
+unknown uploads, failed playback and history replay do not trigger it.
+
+On a fresh origin the introduction and sample selector are visible. After that
+first successful Agent speech playback, they move to 「调试信息 → 入门与测试音频」.
+Playback, pause, stop, volume and recent events remain available. The UI stores
+completion per origin in `localStorage`; clearing site data resets it, and denied
+storage limits the preference to the current page. This is separate from the
+music-audition preference described below.
 
 ```json
 {
@@ -62,6 +76,7 @@ Both `/api/audio` and `/api/speak` return this shape (illustrative values):
   "text":"Optional final caption",
   "created_at":"<UTC ISO-8601 timestamp>",
   "source":"public-api",
+  "audio_kind":"speech",
   "emotion":"neutral",
   "visual_state":""
 }
@@ -91,7 +106,7 @@ Only POST `/api/message`, `/api/audio`, `/api/speak`, and `/api/stop` use the sh
 |---|---|
 | `bridge` | `{ok,type,message}`; type is `connected` or `gap` |
 | `message` | `{text,event_id}` |
-| `speech` | `{audio_url,text,created_at,source,emotion,visual_state,event_id}` |
+| `speech` | `{audio_url,text,created_at,source,audio_kind,emotion,visual_state,event_id}` |
 | `stop` | `{reason:"requested",event_id}` |
 
 Fresh subscriptions start at the current cursor and **do not replay old audio**. Reconnect using `Last-Event-ID`; `?last_event_id=...` is a fallback, and a nonempty header takes precedence. Valid retained cursors replay events strictly after the cursor. Client-side event-ID deduplication is still recommended.
@@ -126,6 +141,30 @@ Idle state is exactly:
 ```json
 {"ok":true,"connection":"disabled","track":null,"playback":{"isPlaying":false,"state":"idle","positionMs":0,"sampledAtMs":0},"lyrics":{"status":"idle","source":"public","lines":[]}}
 ```
+
+### 本地试听与 connected 的界面含义
+
+Agent 端配置音乐不会自动同步到此接口。适配器必须提交
+`POST /api/lyrics/state`，页面再读取 `GET /api/spotify/lyrics-state`。
+`connection:"connected"` 表示本地显示状态可用，不证明 Spotify 账号已授权；
+`isPlaying:false` 的暂停状态也可以是 connected。
+
+点击 Spotify 图标下方文字时，若尚未关闭自动提示、也未收到成功 connected
+音乐状态，页面会询问是否试听本地 Ina cover。以下任一条件会记住不再自动弹出：
+
+- 本地音频触发实际 `playing` 事件。
+- 用户点击「不再提示」。
+- 页面收到成功的 connected 音乐状态，包括暂停或无曲目的 connected 状态。
+
+取消、Escape、播放请求被拒绝或未成功播放不会完成该偏好。浏览器按 origin
+使用 `midori.public.music-audition-dismissed.v1` 保存它；清站点数据可重置，
+禁用存储时仅当前页面有效。测试歌词 fixture 不写入此偏好。
+
+「调试信息 → 本地音乐试听」独立于 Agent 语音入门区，可在上述状态下手动
+重开。试听音频由本地播放器提供时钟，不连接 Agent、Spotify 账号或 TTS；
+日文歌词从 LRCLib 联网获取，以 Ina 原视频字幕的 49 句时间轴逐句显示，
+不提供逐字对齐。此浏览器试听行为与 `/api/lyrics/state` 的服务端合约分开：
+提交歌词状态本身不会开始播放音频或查询歌词。
 
 ## Optional providers and chat stream
 
@@ -170,6 +209,8 @@ The runtime serves allowlisted public files, never a directory listing. Root fil
 - `/audio/demo-tone.wav`
 - `/audio/test-voice-human-01.wav`
 - `/audio/test-voice-human-02.wav`
+- `/audio/test-voice-human-03.mp3` (original MP3 sample; source type unspecified)
+- `/audio/local-audition/nai-nai-ina.ogg` (local audition)
 - `/audio/samples.json`
 - `/source/folia-source.zip`
 
@@ -177,15 +218,16 @@ Only these audio/source paths are exceptions; other `/audio/*` and `/source/*` f
 
 ## Stdlib helper and verification
 
-`examples/avatar_client.py` offers `AvatarClient(base_url, token=None, token_file=None, timeout=45)` and methods `health()`, `status(request_id)`, `message(text, request_id=None)`, `audio(data, format='wav', text='', request_id=None)`, `speak(text, request_id=None)`, `stop(request_id=None)`, `lyrics(state)`, and `demo(request_id=None)`. Token precedence: explicit SDK token, then `MIDORI_API_TOKEN`, then explicit/default token file. It validates IDs/tokens and API paths, pins localhost to IPv4 loopback, disables proxies/redirects, limits JSON responses to 2 MiB, and never retries. It does not implement a chat/SSE reader. `request()` is restricted to its known JSON routes and request-status paths, not a general HTTP client.
+`examples/avatar_client.py` offers `AvatarClient(base_url, token=None, token_file=None, timeout=45)` and methods `health()`, `status(request_id)`, `message(text, request_id=None)`, `audio(data, format='wav', text='', request_id=None, audio_kind='speech')`, `speak(text, request_id=None)`, `stop(request_id=None)`, `lyrics(state)`, and `demo(request_id=None)`. Token precedence: explicit SDK token, then `MIDORI_API_TOKEN`, then explicit/default token file. It validates IDs/tokens and API paths, pins localhost to IPv4 loopback, disables proxies/redirects, limits JSON responses to 2 MiB, and never retries. It does not implement a chat/SSE reader. `request()` is restricted to its known JSON routes and request-status paths, not a general HTTP client.
 
 Run examples from the public project:
 
 ```sh
 python3 examples/avatar_client.py health
 python3 examples/avatar_client.py --request-id turn-42 message 'Final visible message'
-python3 examples/avatar_client.py audio audio/demo-tone.wav --text 'Test tone, not speech'
-python3 examples/avatar_client.py --demo
+# Prepare your own answer.wav containing speech before this upload:
+python3 examples/avatar_client.py audio answer.wav --text 'Final visible speech'
+python3 examples/avatar_client.py demo
 python3 examples/avatar_client.py lyrics path/to/state.json
 python3 examples/avatar_client.py status turn-42
 python3 examples/avatar_client.py stop

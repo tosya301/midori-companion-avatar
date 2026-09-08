@@ -17,6 +17,7 @@ import {
     resolveNowPlayingAnchorTime,
     shouldApplyNowPlayingProgressCorrection,
 } from '../utils/nowPlayingClock';
+import { isLocalAuditionEmbed } from '../utils/localAudition';
 import { buildNowPlayingLyricSource } from '../utils/lyrics/nowPlayingSource';
 // [lyric-stage patch] Now Playing feeds line-level LRC only; reuse folia's own
 // online matcher to upgrade to word-level (karaoke) lyrics when one exists.
@@ -163,6 +164,7 @@ export function useStagePlaybackController({
     setStatusMsg,
     navigateToPlayer,
 }: UseStagePlaybackControllerParams) {
+    const localAudition = isLocalAuditionEmbed();
     const [stageStatus, setStageStatus] = useState<StageStatus | null>(null);
     const [nowPlayingConnectionStatus, setNowPlayingConnectionStatus] = useState<NowPlayingConnectionStatus>('disabled');
     const [nowPlayingTrack, setNowPlayingTrack] = useState<NowPlayingTrackSnapshot | null>(null);
@@ -201,6 +203,18 @@ export function useStagePlaybackController({
     const nowPlayingContentLoadKeyRef = useRef<string | null>(null);
     const nowPlayingContentLoadRequestIdRef = useRef(0);
     const nowPlayingPreciseQueryRequestIdRef = useRef(0);
+    const nowPlayingQueryAbortRef = useRef<AbortController | null>(null);
+    const nowPlayingMatchAbortRef = useRef<AbortController | null>(null);
+    const cancelNowPlayingQuery = useCallback(() => {
+        nowPlayingPreciseQueryRequestIdRef.current += 1;
+        nowPlayingQueryAbortRef.current?.abort();
+        nowPlayingQueryAbortRef.current = null;
+    }, []);
+    const cancelNowPlayingContent = useCallback(() => {
+        nowPlayingContentLoadRequestIdRef.current += 1;
+        nowPlayingMatchAbortRef.current?.abort();
+        nowPlayingMatchAbortRef.current = null;
+    }, []);
     const nowPlayingTrackRef = useRef<NowPlayingTrackSnapshot | null>(null);
     const nowPlayingLyricPayloadRef = useRef<NowPlayingLyricPayload | null>(null);
     const nowPlayingProgressMsRef = useRef(0);
@@ -221,7 +235,7 @@ export function useStagePlaybackController({
     const stageActiveEntryKind = stageStatus?.activeEntryKind ?? null;
     const stageLyricsSession = stageStatus?.lyricsSession ?? null;
     const stageMediaSession = stageStatus?.mediaSession ?? null;
-    const stageSource: StageSource | null = isElectronWindow
+    const stageSource: StageSource | null = localAudition ? 'now-playing' : isElectronWindow
         ? (stageStatus?.modeEnabled ? (stageStatus?.source ?? 'stage-api') : null)
         : (enablePlayerCapStage ? 'playercap' : (enableNowPlayingStage ? 'now-playing' : null));
     const isNowPlayingStageActive = activePlaybackContext === 'stage' && stageSource === 'now-playing';
@@ -507,8 +521,11 @@ export function useStagePlaybackController({
         paused: boolean,
         options: { onlyIfDrifted?: boolean; source: NowPlayingDebugInfo['lastQuerySource']; }
     ) => {
-        const requestId = nowPlayingPreciseQueryRequestIdRef.current + 1;
-        nowPlayingPreciseQueryRequestIdRef.current = requestId;
+        cancelNowPlayingQuery();
+        if (isLocalAuditionEmbed()) return false;
+        const requestId = nowPlayingPreciseQueryRequestIdRef.current;
+        const abort = new AbortController();
+        nowPlayingQueryAbortRef.current = abort;
         const requestStartedAt = performance.now();
         updateNowPlayingDebugInfo(current => ({
             ...current,
@@ -518,7 +535,7 @@ export function useStagePlaybackController({
         }));
 
         try {
-            const response = await fetch(NOW_PLAYING_PROGRESS_QUERY_URL, { cache: 'no-store' });
+            const response = await fetch(NOW_PLAYING_PROGRESS_QUERY_URL, { cache: 'no-store', signal: abort.signal });
             if (!response.ok) {
                 throw new Error(`HTTP ${response.status}`);
             }
@@ -530,7 +547,7 @@ export function useStagePlaybackController({
                 throw new Error('Missing progress value');
             }
 
-            if (nowPlayingPreciseQueryRequestIdRef.current !== requestId) {
+            if (abort.signal.aborted || isLocalAuditionEmbed() || nowPlayingPreciseQueryRequestIdRef.current !== requestId) {
                 return false;
             }
 
@@ -540,6 +557,7 @@ export function useStagePlaybackController({
                 source: options.source,
             });
         } catch (error) {
+            if (abort.signal.aborted || isLocalAuditionEmbed() || nowPlayingPreciseQueryRequestIdRef.current !== requestId) return false;
             const message = error instanceof Error ? error.message : String(error);
             updateNowPlayingDebugInfo(current => ({
                 ...current,
@@ -554,7 +572,7 @@ export function useStagePlaybackController({
             });
             return false;
         }
-    }, [applyNowPlayingPreciseAnchor, isDev, updateNowPlayingDebugInfo]);
+    }, [applyNowPlayingPreciseAnchor, cancelNowPlayingQuery, isDev, updateNowPlayingDebugInfo]);
 
     const buildStageLyricsPlaybackSong = useCallback((session: StageLyricsSession, lyricData: LyricData): SongResult => ({
         id: -Math.max(1, Math.floor(session.updatedAt || Date.now())),
@@ -790,7 +808,10 @@ export function useStagePlaybackController({
         // is word-timed. This runs after the line-level lyrics are already on
         // screen, so a slow or missing match never leaves a blank stage.
         const matchTitle = track?.title || lyricPayload?.title || '';
-        if (matchTitle && renderableLyrics && !hasWordLevelTiming(renderableLyrics) && areAlternativeLyricSourcesEnabled()) {
+        if (!isLocalAuditionEmbed() && matchTitle && renderableLyrics && !hasWordLevelTiming(renderableLyrics) && areAlternativeLyricSourcesEnabled()) {
+            nowPlayingMatchAbortRef.current?.abort();
+            const abort = new AbortController();
+            nowPlayingMatchAbortRef.current = abort;
             void autoMatchBestLyric(
                 matchTitle,
                 track?.artist || lyricPayload?.artist || '',
@@ -798,9 +819,9 @@ export function useStagePlaybackController({
                 // Spotify romanises CJK artists ("Gigi Leung" vs 梁咏琪), which
                 // costs artist/album points on otherwise-correct matches. The
                 // title/identity gate inside the matcher still applies.
-                { album: track?.album || undefined, minScore: 65 },
+                { album: track?.album || undefined, minScore: 65, signal: abort.signal },
             ).then(match => {
-                if (nowPlayingContentLoadRequestIdRef.current !== requestId) return;
+                if (abort.signal.aborted || isLocalAuditionEmbed() || nowPlayingContentLoadRequestIdRef.current !== requestId) return;
                 if (!match || 'isPureMusic' in match || !hasWordLevelTiming(match.lyrics)) return;
 
                 if (isDev) {
@@ -814,7 +835,7 @@ export function useStagePlaybackController({
                     syncNowPlayingDisplaySurface(getNowPlayingDisplayTime(), match.lyrics);
                 }
             }).catch(error => {
-                console.warn('[NowPlaying] Word-level lyric match failed', error);
+                if (!abort.signal.aborted) console.warn('[NowPlaying] Word-level lyric match failed', error);
             });
         }
     }, [
@@ -1116,8 +1137,8 @@ export function useStagePlaybackController({
             nowPlayingProviderRef.current?.stop();
             nowPlayingProviderRef.current = null;
             nowPlayingContentLoadKeyRef.current = null;
-            nowPlayingContentLoadRequestIdRef.current = 0;
-            nowPlayingPreciseQueryRequestIdRef.current = 0;
+            cancelNowPlayingContent();
+            cancelNowPlayingQuery();
             nowPlayingTrackRef.current = null;
             nowPlayingLyricPayloadRef.current = null;
             nowPlayingPausedRef.current = true;
@@ -1145,12 +1166,15 @@ export function useStagePlaybackController({
             debug: isDev,
             onConnectionStatusChange: setNowPlayingConnectionStatus,
             onTrack: (track) => {
+                cancelNowPlayingContent();
+                cancelNowPlayingQuery();
                 nowPlayingTrackRef.current = track;
                 if (shouldPublishNowPlayingStateRef.current) {
                     setNowPlayingTrack(track);
                 }
             },
             onLyric: (lyric) => {
+                cancelNowPlayingContent();
                 nowPlayingLyricPayloadRef.current = lyric;
                 if (shouldPublishNowPlayingStateRef.current) {
                     setNowPlayingLyricPayload(lyric);
@@ -1166,9 +1190,9 @@ export function useStagePlaybackController({
                 nowPlayingProgressMsRef.current = progressMs;
                 nowPlayingProgressQualityRef.current = quality;
 
-                if (quality === 'precise' && stageSource === 'now-playing') {
+                if ((quality === 'precise' || isLocalAuditionEmbed()) && stageSource === 'now-playing') {
                     void applyNowPlayingPreciseAnchorRef.current?.(progressMs, nowPlayingPausedRef.current, {
-                        onlyIfDrifted: true,
+                        onlyIfDrifted: !isLocalAuditionEmbed(),
                         source: 'progress',
                     });
                 }
@@ -1185,11 +1209,13 @@ export function useStagePlaybackController({
 
         return () => {
             provider.stop();
+            cancelNowPlayingContent();
+            cancelNowPlayingQuery();
             if (nowPlayingProviderRef.current === provider) {
                 nowPlayingProviderRef.current = null;
             }
         };
-    }, [isDev, resetNowPlayingClock, stageSource, updateNowPlayingDebugInfo]);
+    }, [cancelNowPlayingContent, cancelNowPlayingQuery, isDev, resetNowPlayingClock, stageSource, updateNowPlayingDebugInfo]);
 
     useEffect(() => {
         if (stageSource !== 'now-playing' || !shouldPublishNowPlayingState) {
@@ -1346,7 +1372,7 @@ export function useStagePlaybackController({
     ]);
 
     useEffect(() => {
-        if (!isNowPlayingStageActive || nowPlayingPaused) {
+        if (localAudition || !isNowPlayingStageActive || nowPlayingPaused) {
             return;
         }
 
@@ -1357,16 +1383,23 @@ export function useStagePlaybackController({
         return () => {
             window.clearInterval(intervalId);
         };
-    }, [isNowPlayingStageActive, nowPlayingPaused, queryNowPlayingPreciseProgress]);
+    }, [localAudition, isNowPlayingStageActive, nowPlayingPaused, queryNowPlayingPreciseProgress]);
 
     useEffect(() => {
         if (activePlaybackContext === 'stage' && stageSource === 'now-playing') {
             return;
         }
 
-        nowPlayingContentLoadRequestIdRef.current += 1;
-        nowPlayingPreciseQueryRequestIdRef.current += 1;
-    }, [activePlaybackContext, stageSource]);
+        cancelNowPlayingContent();
+        cancelNowPlayingQuery();
+    }, [activePlaybackContext, cancelNowPlayingContent, cancelNowPlayingQuery, stageSource]);
+
+    useEffect(() => {
+        if (localAudition) {
+            nowPlayingMatchAbortRef.current?.abort();
+            cancelNowPlayingQuery();
+        }
+    }, [localAudition, cancelNowPlayingQuery]);
 
     useEffect(() => {
         if (!isNowPlayingStageActive) {

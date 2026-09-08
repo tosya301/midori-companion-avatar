@@ -574,13 +574,23 @@ class RuntimeTests(unittest.TestCase):
 
     def test_approved_human_sample_allowlist_is_exact(self):
         (self.root / 'audio').mkdir()
-        for name in ('test-voice-human-01.wav', 'test-voice-human-02.wav', 'test-voice-human-03.wav'):
+        for name in ('test-voice-human-01.wav', 'test-voice-human-02.wav', 'test-voice-human-03.wav', 'test-voice-human-03.mp3', 'private.mp3'):
             (self.root / 'audio' / name).write_bytes(TONE)  # Routing fixture, not a human recording.
         (self.root / 'audio' / 'samples.json').write_text('[]')
-        for path in ('/audio/test-voice-human-01.wav', '/audio/test-voice-human-02.wav', '/audio/samples.json'):
+        for path in ('/audio/test-voice-human-01.wav', '/audio/test-voice-human-02.wav', '/audio/test-voice-human-03.mp3', '/audio/samples.json'):
             self.assertEqual(self.req('GET', path)[0], 200)
             self.assertEqual(self.req('HEAD', path)[0], 200)
         self.assertEqual(self.req('GET', '/audio/test-voice-human-03.wav')[0], 404)
+        self.assertEqual(self.req('GET', '/audio/private.mp3')[0], 404)
+
+    def test_onboarding_audio_provenance_is_explicit(self):
+        body = {'format': 'wav', 'audio_base64': base64.b64encode(TONE).decode()}
+        self.assertEqual(self.req('POST', '/api/audio', body)[1]['audio_kind'], 'unknown')
+        for kind in ('speech', 'test', 'music'):
+            self.assertEqual(self.req('POST', '/api/audio', {**body, 'audio_kind': kind})[1]['audio_kind'], kind)
+        self.assertEqual(self.req('POST', '/api/audio', {**body, 'audio_kind': 'invalid'})[0], 400)
+        sdk = client_module.AvatarClient(self.url, token=self.token)
+        self.assertEqual(sdk.demo()['audio_kind'], 'test')
 
     def test_sdk_rejects_url_path_and_identifier_token_injection(self):
         sdk = client_module.AvatarClient(self.url, token=self.token)

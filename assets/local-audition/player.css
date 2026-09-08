@@ -1,0 +1,33 @@
+.audition-dialog, .audition-bar { color: var(--ink); font: 13px/1.6 ui-rounded, "SF Pro Rounded", "Nunito", "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif; box-sizing: border-box; }
+.audition-dialog { width: min(390px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow: auto; padding: 25px; border: 1px solid var(--line); border-radius: 22px; background: var(--bg); box-shadow: 0 20px 70px rgb(0 0 0 / .22); }
+.audition-dialog::backdrop { background: rgb(8 14 22 / .35); backdrop-filter: blur(5px); }
+.audition-dialog h2 { font-size: 18px; font-weight: 650; margin: 0 0 10px; letter-spacing: 0; }
+.audition-dialog p { margin: 0; }
+.audition-dialog #auditionDescription { color: var(--muted); line-height: 1.8; }
+.audition-track { display: flex; align-items: center; gap: 14px; margin: 20px 0 14px; }
+.audition-track img { width: 112px; height: 63px; object-fit: cover; border-radius: 9px; }
+.audition-track strong { display: block; font-size: 16px; font-weight: 600; }
+.audition-track span { display: block; font-size: 11px; color: var(--muted); }
+.audition-dialog .audition-note { font-size: 11px; color: var(--muted); line-height: 1.7; }
+.audition-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 22px; }
+.audition-dialog button, .audition-bar button { appearance: none; font: inherit; font-weight: 500; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 9px; padding: 7px 12px; min-height: 34px; cursor: pointer; transform: none; box-shadow: none; }
+.audition-dialog button:hover, .audition-bar button:hover { background: var(--input-dock-enter-hover); transform: none; }
+.audition-dialog button:focus-visible, .audition-bar button:focus-visible, .audition-bar input:focus-visible { outline: 2px solid var(--green-deep); outline-offset: 3px; }
+.audition-dialog .audition-primary { color: var(--bg); background: var(--ink); border-color: var(--ink); }
+.audition-dialog .audition-primary:hover { opacity: .88; background: var(--ink); }
+#auditionDialogError { margin-top: 12px; color: var(--ink); }
+.audition-bar { position: fixed; bottom: max(18px, env(safe-area-inset-bottom)); right: 18px; z-index: 75; width: min(330px, calc(100vw - 36px)); padding: 12px 14px 10px; background: var(--bg); border: 1px solid var(--line); border-radius: 17px; box-shadow: 0 8px 32px rgb(0 0 0 / .12); }
+.audition-bar[hidden], .audition-bar [hidden], .audition-dialog [hidden] { display: none !important; }
+.audition-bar-top { display: flex; align-items: center; gap: 6px; }
+.audition-bar-title { min-width: 0; flex: 1; }
+.audition-bar-title strong { display: block; font-size: 13px; font-weight: 600; }
+.audition-bar-title strong span { font-size: 11px; font-weight: 400; color: var(--muted); }
+.audition-bar-title small { display: block; font-size: 10px; color: var(--muted); }
+.audition-bar button { padding: 4px 8px; min-height: 30px; font-size: 11px; border-color: transparent; }
+.audition-progress { display: flex; align-items: center; gap: 9px; margin-top: 9px; font-size: 10px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.audition-progress input { flex: 1; width: 0; }
+.audition-bar input[type="range"] { margin: 0; height: 20px; accent-color: var(--green-deep); cursor: pointer; }
+.audition-bar-bottom { display: flex; align-items: center; gap: 3px; font-size: 9px; color: var(--muted); }
+.audition-bar-bottom label { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.audition-bar-bottom input { width: 58px; }
+@media (prefers-reduced-motion: no-preference) { .audition-dialog[open] { animation: audition-appear 160ms ease-out; } @keyframes audition-appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } } }

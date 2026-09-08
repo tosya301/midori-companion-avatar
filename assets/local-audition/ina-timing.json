@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "videoId": "injd7gHrIGU",
+  "timingSource": "https://www.youtube.com/watch?v=injd7gHrIGU",
+  "subtitleTrack": "uploaded en / romanization window 2",
+  "precision": "line",
+  "lyricProviderId": 12910484,
+  "sourceLineCount": 58,
+  "sourceTextSha256": "5ab0ae11c3bbe5a832dcea340f9a5bab319422dcf31757e1afd950160ff3f316",
+  "audioDurationMs": 250908,
+  "excludedCaptionIndices": [
+    25
+  ],
+  "cues": [
+    {
+      "captionIndex": 0,
+      "sourceLine": 1,
+      "timeMs": 8959,
+      "endTimeMs": 12663
+    },
+    {
+      "captionIndex": 1,
+      "sourceLine": 2,
+      "timeMs": 12663,
+      "endTimeMs": 17034
+    },
+    {
+      "captionIndex": 2,
+      "sourceLine": 3,
+      "timeMs": 17034,
+      "endTimeMs": 20971
+    },
+    {
+      "captionIndex": 3,
+      "sourceLine": 4,
+      "timeMs": 20971,
+      "endTimeMs": 22806
+    },
+    {
+      "captionIndex": 4,
+      "sourceLine": 5,
+      "timeMs": 23741,
+      "endTimeMs": 28145
+    },
+    {
+      "captionIndex": 5,
+      "sourceLine": 6,
+      "timeMs": 28145,
+      "endTimeMs": 31815
+    },
+    {
+      "captionIndex": 6,
+      "sourceLine": 7,
+      "timeMs": 31815,
+      "endTimeMs": 34351
+    },
+    {
+      "captionIndex": 7,
+      "sourceLine": 8,
+      "timeMs": 34351,
+      "endTimeMs": 36954
+    },
+    {
+      "captionIndex": 8,
+      "sourceLine": 9,
+      "timeMs": 38022,
+      "endTimeMs": 40724
+    },
+    {
+      "captionIndex": 9,
+      "sourceLine": 10,
+      "timeMs": 41725,
+      "endTimeMs": 44395
+    },
+    {
+      "captionIndex": 10,
+      "sourceLine": 11,
+      "timeMs": 45429,
+      "endTimeMs": 49066
+    },
+    {
+      "captionIndex": 11,
+      "sourceLine": 12,
+      "timeMs": 49066,
+      "endTimeMs": 51902
+    },
+    {
+      "captionIndex": 12,
+      "sourceLine": 13,
+      "timeMs": 52569,
+      "endTimeMs": 57408
+    },
+    {
+      "captionIndex": 13,
+      "sourceLine": 14,
+      "timeMs": 57408,
+      "endTimeMs": 59977
+    },
+    {
+      "captionIndex": 14,
+      "sourceLine": 15,
+      "timeMs": 59977,
+      "endTimeMs": 64581
+    },
+    {
+      "captionIndex": 15,
+      "sourceLine": 16,
+      "timeMs": 64581,
+      "endTimeMs": 67351
+    },
+    {
+      "captionIndex": 16,
+      "sourceLine": 17,
+      "timeMs": 67351,
+      "endTimeMs": 71955
+    },
+    {
+      "captionIndex": 17,
+      "sourceLine": 18,
+      "timeMs": 71955,
+      "endTimeMs": 74725
+    },
+    {
+      "captionIndex": 18,
+      "sourceLine": 19,
+      "timeMs": 74725,
+      "endTimeMs": 76794,
+      "slice": [
+        0,
+        6
+      ]
+    },
+    {
+      "captionIndex": 19,
+      "sourceLine": 19,
+      "timeMs": 76794,
+      "endTimeMs": 79596,
+      "slice": [
+        7,
+        14
+      ]
+    },
+    {
+      "captionIndex": 20,
+      "sourceLine": 20,
+      "timeMs": 82332,
+      "endTimeMs": 85335
+    },
+    {
+      "captionIndex": 21,
+      "sourceLine": 21,
+      "timeMs": 87438,
+      "endTimeMs": 91809
+    },
+    {
+      "captionIndex": 22,
+      "sourceLine": 22,
+      "timeMs": 91809,
+      "endTimeMs": 95512
+    },
+    {
+      "captionIndex": 23,
+      "sourceLine": 23,
+      "timeMs": 95512,
+      "endTimeMs": 98048
+    },
+    {
+      "captionIndex": 24,
+      "sourceLine": 24,
+      "timeMs": 98048,
+      "endTimeMs": 100884
+    },
+    {
+      "captionIndex": 26,
+      "sourceLine": 25,
+      "timeMs": 116266,
+      "endTimeMs": 121105
+    },
+    {
+      "captionIndex": 27,
+      "sourceLine": 26,
+      "timeMs": 121105,
+      "endTimeMs": 123640
+    },
+    {
+      "captionIndex": 28,
+      "sourceLine": 27,
+      "timeMs": 123640,
+      "endTimeMs": 128278
+    },
+    {
+      "captionIndex": 29,
+      "sourceLine": 28,
+      "timeMs": 128278,
+      "endTimeMs": 131048
+    },
+    {
+      "captionIndex": 30,
+      "sourceLine": 29,
+      "timeMs": 131048,
+      "endTimeMs": 135652
+    },
+    {
+      "captionIndex": 31,
+      "sourceLine": 30,
+      "timeMs": 135652,
+      "endTimeMs": 138388
+    },
+    {
+      "captionIndex": 32,
+      "sourceLine": 31,
+      "timeMs": 138388,
+      "endTimeMs": 140491,
+      "slice": [
+        0,
+        7
+      ]
+    },
+    {
+      "captionIndex": 33,
+      "sourceLine": 31,
+      "timeMs": 140491,
+      "endTimeMs": 143260,
+      "slice": [
+        8,
+        15
+      ]
+    },
+    {
+      "captionIndex": 34,
+      "sourceLine": 33,
+      "timeMs": 146063,
+      "endTimeMs": 148799
+    },
+    {
+      "captionIndex": 35,
+      "sourceLine": 40,
+      "timeMs": 170954,
+      "endTimeMs": 173957
+    },
+    {
+      "captionIndex": 36,
+      "sourceLine": 41,
+      "timeMs": 173957,
+      "endTimeMs": 178328
+    },
+    {
+      "captionIndex": 37,
+      "sourceLine": 42,
+      "timeMs": 178328,
+      "endTimeMs": 180430
+    },
+    {
+      "captionIndex": 38,
+      "sourceLine": 43,
+      "timeMs": 180430,
+      "endTimeMs": 186270
+    },
+    {
+      "captionIndex": 39,
+      "sourceLine": 44,
+      "timeMs": 187304,
+      "endTimeMs": 192142
+    },
+    {
+      "captionIndex": 40,
+      "sourceLine": 45,
+      "timeMs": 192142,
+      "endTimeMs": 194745
+    },
+    {
+      "captionIndex": 41,
+      "sourceLine": 46,
+      "timeMs": 194745,
+      "endTimeMs": 199316
+    },
+    {
+      "captionIndex": 42,
+      "sourceLine": 47,
+      "timeMs": 199316,
+      "endTimeMs": 201752,
+      "slice": [
+        0,
+        10
+      ]
+    },
+    {
+      "captionIndex": 43,
+      "sourceLine": 48,
+      "timeMs": 203954,
+      "endTimeMs": 208592,
+      "slice": [
+        0,
+        12
+      ]
+    },
+    {
+      "captionIndex": 44,
+      "sourceLine": 48,
+      "timeMs": 208592,
+      "endTimeMs": 211328,
+      "slice": [
+        13,
+        18
+      ]
+    },
+    {
+      "captionIndex": 45,
+      "sourceLine": 49,
+      "timeMs": 211328,
+      "endTimeMs": 213397
+    },
+    {
+      "captionIndex": 46,
+      "sourceLine": 50,
+      "timeMs": 213397,
+      "endTimeMs": 216200
+    },
+    {
+      "captionIndex": 47,
+      "sourceLine": 52,
+      "timeMs": 218936,
+      "endTimeMs": 221972
+    },
+    {
+      "captionIndex": 48,
+      "sourceLine": 53,
+      "timeMs": 221972,
+      "endTimeMs": 224274
+    },
+    {
+      "captionIndex": 49,
+      "sourceLine": 55,
+      "timeMs": 226310,
+      "endTimeMs": 229112
+    }
+  ]
+}

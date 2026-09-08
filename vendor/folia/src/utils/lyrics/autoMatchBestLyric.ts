@@ -1,3 +1,4 @@
+import { isLocalAuditionEmbed } from '../localAudition';
 import { LyricData, LyricProviderSource, SongResult } from '../../types';
 import { getOnlineMusicProvider } from '../../services/onlineMusic/providerRegistry';
 import type { OnlineProviderId, ProviderLyricsResult } from '../../types/onlineMusic';
@@ -35,6 +36,8 @@ export interface AutoMatchProviderCandidate {
 }
 
 export interface AutoMatchBestLyricOptions {
+    /** Cooperative cancellation; legacy provider transports may finish in flight. */
+    signal?: AbortSignal;
     album?: string;
     preferredSource?: LyricProviderSource;
     metadataCandidate?: {
@@ -177,6 +180,12 @@ export async function autoMatchBestLyric(
     durationMs: number,
     options: AutoMatchBestLyricOptions = {}
 ): Promise<AutoMatchBestLyricResult> {
+    if (options.signal?.aborted || isLocalAuditionEmbed()) return null;
+    const assertActive = () => {
+        if (options.signal?.aborted || isLocalAuditionEmbed()) {
+            throw new DOMException('Lyric match cancelled', 'AbortError');
+        }
+    };
     const searchQuery = buildLyricSearchQuery(title, artist, options.album);
     const normalizedDurationMs = normalizeLyricMatchDurationMs(durationMs);
     console.log(`[autoMatchBestLyric] Initiating best lyric auto-match for "${searchQuery}" (Duration: ${normalizedDurationMs}ms)`);
@@ -208,6 +217,7 @@ export async function autoMatchBestLyric(
         : buildLyricSourceOrder(options.preferredSource);
 
     const getNeteaseCandidateSongs = async (): Promise<SongResult[]> => {
+        assertActive();
         if (neteaseCandidateSongs) {
             return neteaseCandidateSongs;
         }
@@ -242,6 +252,7 @@ export async function autoMatchBestLyric(
     };
 
     const getQqBestCandidate = async (): Promise<SongResult | null> => {
+        assertActive();
         if (qqBestCandidate !== undefined) {
             return qqBestCandidate;
         }
@@ -267,6 +278,7 @@ export async function autoMatchBestLyric(
     };
 
     const getKugouBestCandidate = async (): Promise<SongResult | null> => {
+        assertActive();
         if (kugouBestCandidate !== undefined) return kugouBestCandidate;
         if (providerCandidate?.providerId === 'kugou') {
             kugouBestCandidate = providerCandidate.song;
@@ -292,6 +304,7 @@ export async function autoMatchBestLyric(
     };
 
     const getNeteaseProcessed = async (song: SongResult) => {
+        assertActive();
         if (providerCandidate?.providerId === 'netease' && String(providerCandidate.song.id) === String(song.id)) {
             return providerCandidate.lyricsResult;
         }
@@ -307,6 +320,7 @@ export async function autoMatchBestLyric(
     };
 
     const getKugouProcessed = async (song: SongResult): Promise<ProviderLyricsResult | null> => {
+        assertActive();
         if (providerCandidate?.providerId === 'kugou'
             && String(providerCandidate.song.kgHash ?? providerCandidate.song.id).toUpperCase() === String(song.kgHash ?? song.id).toUpperCase()) {
             return providerCandidate.lyricsResult;
@@ -320,6 +334,7 @@ export async function autoMatchBestLyric(
     };
 
     const getQqProcessed = async (song: SongResult): Promise<ProviderLyricsResult | null> => {
+        assertActive();
         const songIdentity = String(song.qqMid ?? (
             song.sourceRef?.kind === 'online' ? song.sourceRef.mediaId : song.id
         ));
@@ -354,6 +369,7 @@ export async function autoMatchBestLyric(
         sourceProviderId: 'netease' | 'kugou',
         sourceSong: SongResult,
     ): Promise<LyricData> => {
+        assertActive();
         const providerResult = providerCandidate
             ? { ...providerCandidate.lyricsResult, lyrics, isPureMusic: false }
             : { ...(sourceResult ?? { isPureMusic: false }), lyrics, isPureMusic: false };
@@ -368,6 +384,7 @@ export async function autoMatchBestLyric(
         platform: 'ncm' | 'qq',
         song: any,
     ): Promise<AutoMatchBestLyricMatch | null> => {
+        assertActive();
         console.log(`[autoMatchBestLyric] Probing AMLLDB ${platform}/${song.id} for "${song.name || title}"`);
         const lyrics = await withTimeout(
             fetchAmllDbLyrics(platform, song.id),
@@ -375,6 +392,7 @@ export async function autoMatchBestLyric(
             `AMLLDB lyric fetch for ${platform}/${song.id}`,
             null
         );
+        assertActive();
         if (!lyrics) {
             console.log(`[autoMatchBestLyric] AMLLDB ${platform}/${song.id} returned no TTML lyrics. Continuing with the next source.`);
             return null;
@@ -408,6 +426,7 @@ export async function autoMatchBestLyric(
     };
 
     for (const searchSource of searchOrder) {
+        if (options.signal?.aborted || isLocalAuditionEmbed()) return null;
         if (searchSource === 'netease') {
             // 1. NetEase Music
             try {
@@ -443,6 +462,7 @@ export async function autoMatchBestLyric(
                     }
                 }
             } catch (error) {
+                if (options.signal?.aborted || isLocalAuditionEmbed()) return null;
                 console.error(`[autoMatchBestLyric] NetEase search/fetch failed:`, error);
             }
         } else if (searchSource === 'amll') {
@@ -471,6 +491,7 @@ export async function autoMatchBestLyric(
                 }
                 console.log('[autoMatchBestLyric] AMLLDB auto probe finished after NCM miss; QQ AMLLDB probing is reserved for manual matching.');
             } catch (error) {
+                if (options.signal?.aborted || isLocalAuditionEmbed()) return null;
                 console.error(`[autoMatchBestLyric] AMLLDB probe failed:`, error);
             }
         } else if (searchSource === 'qq') {
@@ -500,6 +521,7 @@ export async function autoMatchBestLyric(
                     }
                 }
             } catch (error) {
+                if (options.signal?.aborted || isLocalAuditionEmbed()) return null;
                 console.error(`[autoMatchBestLyric] QQ search/fetch failed:`, error);
             }
         } else if (searchSource === 'kugou') {
@@ -528,6 +550,7 @@ export async function autoMatchBestLyric(
                     }
                 }
             } catch (error) {
+                if (options.signal?.aborted || isLocalAuditionEmbed()) return null;
                 console.error(`[autoMatchBestLyric] Kugou search/fetch failed:`, error);
             }
         }

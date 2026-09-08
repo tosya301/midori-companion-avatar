@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Midori Companion · Public Candidate</title>
+  <title>Midori Companion Avatar 0.1</title>
   <meta name="description" content="非官方粉丝制作的本地 Companion Avatar；支持通用 Agent 接入、可选 TTS 与歌词视觉舞台。" />
   <script>
     (() => {
@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="./assets/gachikoi/gachikoi-distance.css?v=classic-gachi-up40-v1" />
   <link rel="stylesheet" href="./assets/aqua-cat/night-aqua-cat.css?v=accepted-v1" />
   <link rel="stylesheet" href="./assets/shortcut-families/families.css?v=accepted-v1">
+  <link rel="stylesheet" href="./assets/local-audition/player.css?v=1">
 </head>
 <body>
   <div id="nightStarfield" class="night-starfield" aria-hidden="true"></div>
@@ -311,7 +312,7 @@
       <div class="live-panel" id="livePanel">
         <p class="eyebrow">Midori Companion · Agent Bridge</p>
         <h2>阿绿语音控制面板</h2>
-        <p>先体验头像，再接入你自己的 Agent。<a href="./help.html" target="_blank" rel="noopener">使用与接入说明 ↗</a></p>
+        <p id="publicIntro">先体验头像，再接入你自己的 Agent。<a href="./help.html" target="_blank" rel="noopener">使用与接入说明 ↗</a></p>
         <div id="errorBox" class="error-box" role="alert" hidden></div>
       </div>
 
@@ -369,11 +370,15 @@
 
       <audio id="audio" preload="metadata" src="./audio/demo-tone.wav"></audio>
 
-      <details>
+      <details id="publicDebug">
         <summary>调试信息</summary>
+        <button id="localAuditionOpen" type="button" class="ghost-btn">本地音乐试听</button>
+        <details id="publicOnboarding" hidden>
+          <summary>入门与测试音频</summary>
+        </details>
         <dl class="debug-grid">
           <div><dt>Audio</dt><dd id="audioPath">./audio/demo-tone.wav</dd></div>
-          <div><dt>Samples</dt><dd>内置提示音与两条 AI 合成人声，仅用于测试；不需要账号或联网。</dd></div>
+          <div><dt>Samples</dt><dd>内置提示音与三条测试语音；第三条为用户提供的音频，来源类型未注明。本地播放，不调用 TTS。</dd></div>
           <div><dt>Renderer</dt><dd>5×5 transparent PNG direction frames + CSS mouth overlay</dd></div>
         </dl>
       </details>

@@ -1,6 +1,6 @@
 {
   "name": "midori-companion-avatar",
-  "version": "0.1.0-preview.2",
+  "version": "0.1.0",
   "private": true,
   "type": "module",
   "description": "Local fan companion avatar; Node is only needed for browser tests and optional renderer builds",

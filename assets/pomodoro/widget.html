@@ -1,0 +1,25 @@
+
+<div id="clock" class="clock" data-phase="work" data-running="false" tabindex="0" role="group" aria-label="番茄钟。长按外壳拖动；聚焦外壳后方向键移动。" aria-describedby="instructions">
+<div class="glass" aria-hidden="true"></div>
+<span class="resize-corner" data-resize-corner="nw" aria-hidden="true"></span><span class="resize-corner" data-resize-corner="ne" aria-hidden="true"></span><span class="resize-corner" data-resize-corner="sw" aria-hidden="true"></span><span class="resize-corner" data-resize-corner="se" aria-hidden="true"></span>
+<div id="face" class="face">
+<svg class="ring" viewBox="0 0 250 250">
+<g transform="rotate(-90 125 125)"><circle class="track" cx="125" cy="125" r="101" aria-hidden="true"></circle><circle id="remaining" class="remaining" cx="125" cy="125" r="101" pathLength="1" stroke-dasharray="1 1" aria-hidden="true"></circle></g>
+<circle id="ringHit" class="ring-hit" cx="125" cy="125" r="101" tabindex="0" role="slider" aria-label="剩余时间，长按圆环调整，方向键每次调整一分钟" aria-valuemin="0" aria-valuemax="3600" aria-valuenow="3600"></circle>
+<circle id="ringHandle" class="ring-handle" cx="125" cy="24" r="6" aria-hidden="true"></circle>
+</svg>
+<input id="phase" class="inline-field phase" value="WORK READ" aria-label="编辑当前阶段标题" maxlength="32" autocomplete="off" spellcheck="false">
+<input id="time" class="inline-field time" value="60:00" aria-label="编辑本段总时长，分钟或分冒号秒" inputmode="decimal" autocomplete="off" spellcheck="false">
+<span id="accessibleTime" class="sr-only" role="timer" aria-live="off">60:00</span><input id="rounds" class="inline-field rounds" value="#1/1" aria-label="编辑轮数：总轮数，或当前轮数/总轮数" maxlength="6" inputmode="text" autocomplete="off" spellcheck="false">
+<div class="clock-controls"><button id="toggle" aria-label="开始倒计时"><span>START</span></button><button id="reset" aria-label="重置整组倒计时"><span>RESET</span></button></div>
+</div><span class="clock-hint" aria-hidden="true">HOLD TO MOVE</span>
+</div><p id="status" class="status" role="status">点击 START 开始专注</p>
+<p id="instructions" class="sr-only">长按外壳移动；拖动四角缩放；长按圆环调时。拖到人物上松手收起。右键打开设置。</p><button id="settings" hidden>设置</button><dialog id="dialog" aria-labelledby="settingsTitle"><form id="form">
+<h2 id="settingsTitle">倒计时设置</h2><div class="actions"><button id="center" class="quiet" type="button">归位</button><button id="skip" class="quiet" type="button">切到休息</button></div>
+<label class="field">专注标题<input id="label" value="WORK READ" maxlength="32"></label>
+<label class="field">休息标题<input id="breakLabel" value="BREAK" maxlength="32"></label>
+<div class="fields"><label class="field">专注 · 分钟<input id="work" type="number" min="0.016" max="180" step="any" value="60" required></label><label class="field">休息 · 分钟<input id="break" type="number" min="0.016" max="180" step="any" value="5" required></label></div>
+<label class="field">循环轮数<input id="count" type="number" min="1" max="20" step="1" value="1" required></label>
+<p>直接编辑中央时间会设定本段总时长；拖圆环只改剩余时间。两者结束后都保持原先的播放／暂停状态。设置表单“应用”会重置整组。本版不播放提示音。</p>
+<div class="actions"><button id="cancel" class="quiet" type="button">取消</button><button class="save" type="submit">应用并重置</button></div>
+</form></dialog><button id="restoreClock" class="clock-restore" type="button" aria-label="显示番茄钟" data-tooltip="显示番茄钟" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></button>

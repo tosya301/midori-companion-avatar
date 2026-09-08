@@ -32,6 +32,12 @@
       "listening_acceptance": "accepted-by-maintainer",
       "inclusion_approval": "maintainer-approved-for-public-version",
       "rights": "See ../ASSET_RIGHTS.md; synthetic sample, not an original human recording or a blanket MIT voice grant."
+    },
+    {
+      "id": "human-03",
+      "label": "测试语音-人声03",
+      "file": "test-voice-human-03.mp3",
+      "kind": "user-provided-audio"
     }
   ]
 }

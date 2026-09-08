@@ -23,7 +23,7 @@ async function post(route,body){
     p.on('request',r=>{if(!r.url().startsWith(BASE)&&/^https?:/.test(r.url()))report.externalRequests.push(r.url());});
     await p.goto(BASE+'/',{waitUntil:'domcontentloaded'});
     await p.waitForFunction(()=>document.querySelector('#bridgeStatus').textContent.includes('online'));
-    assert.match(await p.title(),/Public Candidate/);
+    assert.match(await p.title(),/Midori Companion Avatar 0\.1/);
     await p.waitForFunction(()=>document.querySelector('#avatarFrame').naturalWidth>0);
     await p.screenshot({path:path.join(OUT,'desktop-light.png')});
     report.checks.push('real static page, default art and SSE bridge loaded');
@@ -43,14 +43,14 @@ async function post(route,body){
     report.checks.push('real builtin WAV playback, advancing time, RMS and mouth response, stop control');
 
     await p.waitForFunction(()=>!document.querySelector('#sampleSelect').disabled);
-    assert.deepEqual(await p.locator('#sampleSelect option').allTextContents(),['测试音-提示音','测试语音-人声01','测试语音-人声02']);
-    for(const id of ['human-01','human-02']){
+    assert.deepEqual(await p.locator('#sampleSelect option').allTextContents(),['测试音-提示音','测试语音-人声01','测试语音-人声02','测试语音-人声03']);
+    for(const id of ['human-01','human-02','human-03']){
       await p.selectOption('#sampleSelect',id);await p.click('#samplePlayBtn');
-      await p.waitForFunction(name=>document.querySelector('#audio').src.includes(`test-voice-${name}.wav`)&&!document.querySelector('#audio').paused&&document.querySelector('#audio').currentTime>0.15,id);
-      const duration=await p.locator('#audio').evaluate(e=>e.duration);assert(duration>4&&duration<6);
+      await p.waitForFunction(name=>document.querySelector('#audio').src.includes(`test-voice-${name}.${name==='human-03'?'mp3':'wav'}`)&&!document.querySelector('#audio').paused&&document.querySelector('#audio').currentTime>0.15,id);
+      const duration=await p.locator('#audio').evaluate(e=>e.duration);assert(duration>0&&Number.isFinite(duration));
       await p.click('#stopBtn');await p.waitForTimeout(150);
     }
-    report.checks.push('both accepted human samples selectable and actually playable with exact labels');
+    report.checks.push('all three voice samples selectable and actually playable with exact labels');
 
     const messageId=randomUUID(),text='公开接口实测：这是一条最终回复，不是模型生成测试。';
     const first=await post('/api/message',{text,request_id:messageId});

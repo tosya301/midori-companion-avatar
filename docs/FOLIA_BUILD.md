@@ -2,6 +2,21 @@
 
 ## Status and boundaries
 
+### Release 0.1 integration
+
+The checkout now includes the accepted local-audition isolation change:
+`lyricStage=1&localAudition=1` selects host-owned audio progress and supplied
+lyrics, skipping connected-service progress probes and automatic lyric upgrades.
+The rebuilt 105-file deployment matches the candidate build exactly. Typecheck
+and Vite build passed; the selected suite reports 734 passed / 1 skipped across
+89 passed / 1 skipped test files. Evidence: `local-audition-*.log` in the existing
+build-evidence folder. All twelve modes were loaded with local audio in the
+browser; this is not a sustained animation-performance or live Spotify test.
+
+The corresponding source archive/manifest is refreshed for release 0.1.
+The production-preservation comparisons and initial build logs below describe
+the historical packaging baseline, not equality of this new runtime to it.
+
 This distribution includes the modified Folia source used for the local Midori
 lyric-stage candidate, not a pointer to a developer workspace. The working tree
 is `vendor/folia/`; the downloadable source offer is `source/folia-source.zip`.
@@ -9,7 +24,7 @@ The ZIP preserves this relative layout under `folia-source/`, including this
 document, the machine-readable manifest and license notices. No private Git
 history, patch replay, credentials or developer-host symlinks are required.
 
-**Full-asset public preview; supplied-media permission is maintainer-confirmed.**
+**Full-asset public release; supplied-media permission is maintainer-confirmed.**
 On 2026-09-08 the maintainer confirmed the permissions required to publicly
 redistribute all supplied media and authorized the complete release. This is a
 maintainer declaration, not an independent legal audit or official endorsement.

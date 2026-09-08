@@ -1,3 +1,5 @@
+import { isLocalAuditionActive, getLocalAuditionState, rememberMusicConnection } from './assets/local-audition/player.js';
+
 export const SPOTIFY_LYRIC_MODES = Object.freeze([
   { engine: 'original', mode: 'luminous' },
   { engine: 'original', mode: 'blueprint' },
@@ -334,7 +336,7 @@ function frameUrlFor(mode) {
   if (mode.engine === 'original') {
     return `./lyrics-stage/original/index.html?mode=${encodeURIComponent(mode.mode)}&theme=${theme}`;
   }
-  return `./lyrics-stage/folia/index.html?lyricStage=1&visualizer=${encodeURIComponent(mode.mode)}`;
+  return `./lyrics-stage/folia/index.html?lyricStage=1&visualizer=${encodeURIComponent(mode.mode)}${isLocalAuditionActive() ? '&localAudition=1' : ''}`;
 }
 
 function postStateToFrame() {
@@ -360,7 +362,7 @@ function postStateToFrame() {
 function ensureSpotifyLyricsFrame(state, { forceMode = null } = {}) {
   if (!frame || !layer || !state?.track) return;
   const mode = forceMode || chooseSpotifyLyricMode(state.track, requestedMode);
-  const nextFrameKey = `${mode.engine}:${mode.mode}`;
+  const nextFrameKey = `${mode.engine}:${mode.mode}${isLocalAuditionActive() ? ':local-audition' : ''}`;
   currentMode = mode;
   updateStageMenuSelection();
   layer.dataset.engine = mode.engine;
@@ -417,6 +419,11 @@ function scheduleSpotifyLyricsPoll(delay) {
 async function pollSpotifyLyricsState() {
   window.clearTimeout(pollTimer);
   pollTimer = 0;
+  if (isLocalAuditionActive()) {
+    cancelSpotifyLyricsRequest();
+    applySpotifyLyricsState(getLocalAuditionState());
+    return;
+  }
   if (!hasSpotifyContext()) {
     cancelSpotifyLyricsRequest();
     applySpotifyLyricsState(null);
@@ -448,6 +455,7 @@ async function pollSpotifyLyricsState() {
       });
     const state = await Promise.race([pending, aborted]);
     if (lyricsRequest !== request || signal.aborted || !hasSpotifyContext()) return;
+    if (!fixtureEnabled) rememberMusicConnection(state);
     applySpotifyLyricsState(state);
     delay = emptyPlaybackSince !== null ? TRACK_TRANSITION_POLL_MS
       : fixtureEnabled ? 1_000 : spotifyLyricsPollInterval(state);
@@ -482,6 +490,13 @@ function cancelSpotifyLyricsRequest() {
 export function wakeSpotifyLyricsStage() {
   window.clearTimeout(pollTimer);
   pollTimer = 0;
+  if (isLocalAuditionActive()) {
+    cancelSpotifyLyricsRequest();
+    applySpotifyLyricsState(getLocalAuditionState());
+    return;
+  }
+  // End/stop must clear local ownership immediately, not wait for the next remote poll.
+  if (currentState?.source === 'local-audition') applySpotifyLyricsState(null);
   if (hasSpotifyContext()) void pollSpotifyLyricsState();
   else {
     cancelSpotifyLyricsRequest();
@@ -514,6 +529,7 @@ function setupSpotifyLyricsStage() {
   });
   window.addEventListener('message', acceptLyricFrameMessage);
   window.addEventListener('midori:spotify-control', wakeSpotifyLyricsStage);
+  window.addEventListener('midori:local-audition-state', wakeSpotifyLyricsStage);
   new MutationObserver(wakeSpotifyLyricsStage).observe(contextDock, {
     attributes: true,
     attributeFilter: ['data-context'],

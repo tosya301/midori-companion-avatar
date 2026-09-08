@@ -96,11 +96,43 @@ with urlopen(request, timeout=15) as response:
 
 ## 语音由谁负责
 
+### 接通后的界面
+
+首次成功播放来自 Agent 的新语音后，页面会把接入提示与测试音频收进
+「调试信息 → 入门与测试音频」，以后仍可展开。此状态按浏览器 origin
+保存在本地；仅配置模型、播放测试音/音乐或重播历史不会触发。首次打开时
+样音区直接可见；收起后原有播放、暂停、停止、音量和最近事件仍保留。
+清除站点数据会重置；禁用存储时只对当前页面生效。
+
+直接调用 `/api/audio` 时，真实语音请显式附上 `"audio_kind":"speech"`。
+可选值为 `speech`、`test`、`music`、`unknown`；省略为 `unknown`，音频仍可播放，
+但不计为完成接入。`avatar_client.py audio` 默认标为 speech，`demo` 标为 test；
+`/api/speak` 和服务端生成的语音自动标为 speech。此字段是调用者声明，
+不是自动识别人声或独立验证 Agent 身份。
+
 1. **优先使用 agent 已有音频**：`audio` 上传即可；无需配置任何 TTS 服务。
 2. **Fish，显式选择且可能收费**：用户设置 `MIDORI_TTS_PROVIDER=fish`、`FISH_API_KEY`、`FISH_REFERENCE_ID`，模型为 `s2.1-pro`。所有密钥和音色 ID 均由用户自己提供；未获同意不要试调或消耗额度。
 3. **用户自己的本地 HTTP TTS**：设置 `MIDORI_TTS_PROVIDER=local` 与 `MIDORI_TTS_URL`。服务用 HTTP POST 提交 `{ "text": "最终回答" }`，目标返回受支持的音频二进制，而不是 JSON/base64。地址必须是受信任的 loopback `http://` URL，无 URL 凭据、fragment 或重定向；不是任意 TTS UI 地址。先做用户授权的最小验证。
 
 不配置 TTS 仍能显示文字、上传音频和查看本地视觉效果。TTS 失败时明确报错；**不得自动切换到付费服务**。
+
+## 音乐状态与本地试听独立
+
+Agent 语音接入成功不代表音乐服务已连接；仅在 Agent 端配置音乐也不会自动
+同步到 Avatar。适配器需提交 `POST /api/lyrics/state`，页面再通过
+`GET /api/spotify/lyrics-state` 读取。`connection:"connected"` 表示有可用的
+显示状态，不是 Spotify 账号授权或真实播放的证明。暂停状态同样可为 connected。
+
+在尚未关闭自动提示、也未收到成功 connected 音乐状态时，点击 Spotify
+图标下方文字会询问是否试听 Ina cover。只有本地音频实际开始播放、用户点击
+「不再提示」，或页面收到成功 connected 音乐状态才记住不再自动弹出。
+取消、Escape 或未成功播放不会记住。音乐偏好独立于 Agent 语音接入状态，
+按 origin 保存在 `localStorage`；清站点数据重置，禁用存储时仅当前页有效。
+
+「调试信息 → 本地音乐试听」可随时手动重开，包括 Agent 语音已接通、音乐
+已连接或自动提示已关闭的情况。试听不需要 Agent、Spotify 账号或 TTS；
+音源在本地，日文歌词通过 LRCLib 联网获取，并使用 Ina 原视频字幕的 49 句
+时间轴，非逐字对齐。测试歌词与本地试听不得报告成真实账号音乐。
 
 ## 从网页输入框调用 agent（可选）
 

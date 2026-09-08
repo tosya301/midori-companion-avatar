@@ -8,6 +8,16 @@ applied in this source distribution; it is not an unmodified upstream release.
 
 ## Renderer adaptations retained
 
+## Local audition integration (local checkout; not yet released)
+
+An explicit `lyricStage=1&localAudition=1` iframe mode now uses host-supplied
+audio progress and line lyrics, without Spotify progress probes or automatic
+online lyric replacement. Pending requests are invalidated on source changes
+and teardown; same-origin parent validation is unchanged. Renderer designs and
+all twelve mode entries are preserved. See `LOCAL_AUDITION.md` for evidence.
+This adds runtime changes beyond the historical source-distribution-only
+preparation described below; that earlier byte-equality claim is historical.
+
 - Embedded `lyricStage=1` bootstrap and same-origin parent-message Now Playing
   transport, progress clock and word-timed lyric matching; the deployed behavior
   is retained rather than the subsequently abandoned unified-lyrics experiment.

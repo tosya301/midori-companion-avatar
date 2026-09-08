@@ -1,4 +1,4 @@
-import { resolveLyricPresentation } from './lyric-presentation.mjs';
+import { resolveLyricPresentation, hasPlaybackTrack } from './lyric-presentation.mjs';
 import { planLyricRows } from './lyric-layout.mjs';
 
 const TEMPLATES = [
@@ -204,7 +204,7 @@ function renderMetadata(state) {
 }
 
 function tick() {
-  const state = sourceState?.connection === 'connected' && sourceState?.track ? sourceState : IDLE_STATE;
+  const state = hasPlaybackTrack(sourceState) ? sourceState : IDLE_STATE;
   const presentation = resolveLyricPresentation(state);
   const duration = Number(state.track?.durationMs) || 0;
   const position = playbackPosition(state);

@@ -11,30 +11,19 @@
     "qualification": "Recorded integration provenance, not a fresh upstream Git-object or complete patch audit; this is not a full v0.7.3 upgrade."
   },
   "source_selection": {
-    "reference": "Recovered production editable source matching the current deployed renderer after the September 8 rollback",
-    "rejected_reference": "September 7 flash/unified-lyrics experiment; the later recovery record explicitly reverted its Folia runtime changes",
-    "runtime_source_tests_assets_package_lockfile": "Byte-identical to recovered production source",
-    "modified_production_build_inputs": [
-      "vite.config.ts"
+    "reference": "Accepted local-audition candidate based on the recovered production renderer",
+    "modified_runtime_inputs": [
+      "src/hooks/useStagePlaybackController.ts",
+      "src/utils/lyrics/autoMatchBestLyric.ts",
+      "src/utils/localAudition.ts"
     ],
-    "build_configuration_change": "Replace Git/CI metadata and commit-name network lookup with deterministic source-distribution version labels; no renderer code changes",
-    "excluded_recovered_metadata": [
-      "realeco-release",
-      ".git",
-      ".gemini",
-      ".codegraph"
-    ],
-    "private_originals_modified": false
+    "retained_build_configuration": "Deterministic source-distribution metadata",
+    "scope": "Explicit per-document local audition mode; renderer designs preserved; locally integrated, not published"
   },
   "artifact_correspondence": {
     "candidate_dist_equals_deployed_exactly": true,
-    "candidate_and_original_production_file_counts": 105,
-    "same_path_same_bytes_vs_original_production": 96,
-    "changed_html_entries": 1,
-    "renamed_js_chunks": 8,
-    "normalized_all_files_equal": true,
-    "normalization": "Replace each actual hashed asset basename with its stem-HASH.extension equivalent, then replace the original informational version label with the deterministic source-distribution version label; compare all file bytes",
-    "claim_boundary": "Artifact preservation plus existing targeted tests, not new browser, live audio or Spotify acceptance testing"
+    "deployed_file_count": 105,
+    "claim_boundary": "Hash equality of accepted candidate dist and local deployment; not equivalence to earlier runtime or full animation/performance acceptance"
   },
   "modes": [
     "classic",
@@ -60,20 +49,20 @@
     "install_command": "npm ci --ignore-scripts",
     "typecheck_command": "npm run typecheck",
     "build_command": "MIDORI_LYRIC_STAGE_BUILD=1 ELECTRON=true node node_modules/vite/bin/vite.js build",
-    "test_command": "npm run test:unit -- --maxWorkers=2 --testTimeout=20000 test/unit/visualizer test/unit/lyrics test/unit/hooks/nowPlayingClock.test.ts test/unit/services/nowPlayingProvider.test.ts",
+    "test_command": "npm run test:unit -- --maxWorkers=2 --testTimeout=20000 test/unit/visualizer test/unit/lyrics test/unit/hooks/nowPlayingClock.test.ts test/unit/services/nowPlayingProvider.test.ts test/unit/hooks/localAuditionStage.test.ts test/unit/services/localAuditionTransport.test.ts",
     "existing_evidence_reused_without_rebuild": true,
     "typecheck_exit_code": 0,
     "vite_exit_code": 0,
     "vite_version": "8.2.1",
-    "transformed_modules": 3639,
-    "vite_build_seconds": 14.17,
+    "transformed_modules": 3640,
+    "vite_build_seconds": 5.56,
     "latest_unit_result": {
       "exit_code": 0,
-      "passed_tests": 711,
+      "passed_tests": 734,
       "skipped_tests": 1,
-      "passed_test_files": 87,
+      "passed_test_files": 89,
       "skipped_test_files": 1,
-      "duration_seconds": 73.72
+      "duration_seconds": 87.23
     },
     "previous_attempts": [
       {
@@ -100,11 +89,12 @@
     ],
     "not_verified": [
       "Full repository unit suite",
-      "Browser visual regression",
-      "Live Spotify or remote lyric providers",
+      "Sustained animation performance",
+      "Live Spotify account regression",
       "Electron packaging",
       "Cross-platform byte-identical rebuild"
-    ]
+    ],
+    "evidence_prefix": "local-audition-"
   },
   "licenses": {
     "folia": "vendor/folia/LICENSE",
@@ -154,12 +144,12 @@
     "symlinks_allowed": false,
     "includes_dependency_metadata_and_full_retained_project_source": true
   },
-  "generated_at_utc": "2026-09-08T17:22:55.617097+00:00",
+  "generated_at_utc": "2026-09-08T20:04:58.513285+00:00",
   "source_payload": [
     {
       "path": "docs/FOLIA_BUILD.md",
-      "bytes": 11912,
-      "sha256": "821c228025c67cd931d301f2ee5428e13541128196b40fb984f0c376bce02996"
+      "bytes": 12794,
+      "sha256": "1d08cb7b6d25291136e5b89000cff09253d4a5d13c9c9e9e337058d81e0bf371"
     },
     {
       "path": "lyrics-stage/THIRD_PARTY.md",
@@ -5342,9 +5332,14 @@
       "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
     },
     {
+      "path": "vendor/folia/LOCAL_AUDITION.md",
+      "bytes": 2949,
+      "sha256": "1d4c2d2aed25b0869d9df12a3a42ee7ebc2d1d394c350489b14e5d7ddc4eea1b"
+    },
+    {
       "path": "vendor/folia/MIDORI_MODIFICATIONS.md",
-      "bytes": 2745,
-      "sha256": "06a147cfa01d109998e46db59339dd3c185811bd099d318d8384b194ad580699"
+      "bytes": 3350,
+      "sha256": "dce30815f434101d4f9c20c062b5be792297c7dd5e7c49bd34906e0db79ee123"
     },
     {
       "path": "vendor/folia/README.md",
@@ -8093,8 +8088,8 @@
     },
     {
       "path": "vendor/folia/src/hooks/useStagePlaybackController.ts",
-      "bytes": 59309,
-      "sha256": "52193bc75c9cc2bce060286d52c7a144d2c528365584b1a125fdc830e422c818"
+      "bytes": 61160,
+      "sha256": "fa8b09bf4111e03dbc286dc8502d64745bd25aa0d6426d2bf54cc0b7f3aaedb7"
     },
     {
       "path": "vendor/folia/src/hooks/useThemeController.ts",
@@ -8667,6 +8662,11 @@
       "sha256": "a4cd711b2aed231e005336d049b5f24683de1635133dff3eede89c61ab527cb6"
     },
     {
+      "path": "vendor/folia/src/utils/localAudition.ts",
+      "bytes": 438,
+      "sha256": "d5128f59d29824b38fb5d3d37df363b3f6968e88efb4326778d67a9d3ea1ad71"
+    },
+    {
       "path": "vendor/folia/src/utils/localLibraryIndex.ts",
       "bytes": 1637,
       "sha256": "b414b3dca0bd6ee33e4fa45b9e64f5144da39274a62595f1a092603dd74c30d0"
@@ -8748,8 +8748,8 @@
     },
     {
       "path": "vendor/folia/src/utils/lyrics/autoMatchBestLyric.ts",
-      "bytes": 24128,
-      "sha256": "dc35ebd8c03f159c2419534b35e2beb10a155218ac13b597ee7d2324ab843cd6"
+      "bytes": 25187,
+      "sha256": "f33ea34e4ad8e30eef96a7a8b28214ce0bd4b3eba2de47657db4bf9f5d234272"
     },
     {
       "path": "vendor/folia/src/utils/lyrics/chorusEffects.ts",
@@ -9377,6 +9377,11 @@
       "sha256": "f2c75d0b9e85e25267a59f45a697d95292f09dc51228faeee87591046b12ead8"
     },
     {
+      "path": "vendor/folia/test/unit/hooks/localAuditionStage.test.ts",
+      "bytes": 10151,
+      "sha256": "48f2047c2a4c8aebca3a691474afd9396ad5bff42631e78f87e9ed759033f23c"
+    },
+    {
       "path": "vendor/folia/test/unit/hooks/nowPlayingClock.test.ts",
       "bytes": 3696,
       "sha256": "195706417151d27fcd8deb432c6abd97415c2f67bc0ebd383cdf69a403d24392"
@@ -9448,8 +9453,8 @@
     },
     {
       "path": "vendor/folia/test/unit/lyrics/autoMatchBestLyric.test.ts",
-      "bytes": 30188,
-      "sha256": "326dd34cc478eb856a91dea45c4eabb182b6a31e22db5a40fe93d3a9f963b8f3"
+      "bytes": 32020,
+      "sha256": "fbcaa221640fdc898d8cadf6599d18dbb64526e4cf9f2f2df163727a9bea9f26"
     },
     {
       "path": "vendor/folia/test/unit/lyrics/chorusResolver.test.ts",
@@ -9815,6 +9820,11 @@
       "path": "vendor/folia/test/unit/services/dbLocalSongCoverSanitization.test.ts",
       "bytes": 3979,
       "sha256": "ec86755ba61e9f971a5b18e1b8a9cb00a12ca6ac574ae0913cbf82639c5d8856"
+    },
+    {
+      "path": "vendor/folia/test/unit/services/localAuditionTransport.test.ts",
+      "bytes": 3085,
+      "sha256": "c4dac48a140714b3fffbe133eeeb5117860e587bfc7304eefe5145599d6e2b70"
     },
     {
       "path": "vendor/folia/test/unit/services/localCoverAssetService.test.ts",
@@ -10369,34 +10379,34 @@
       "sha256": "ca40578a45bffae13a9f40b1c60c2b3c9363cc0b23994a7e130684980acde743"
     },
     {
-      "path": "lyrics-stage/folia/assets/BitmapFont-Bjuae5wG.js",
-      "bytes": 33806,
-      "sha256": "981d336ba17b6a6ecf0d017f873eae6d42cb59e8f51e31a12aa68ebca3f379ea"
+      "path": "lyrics-stage/folia/assets/BitmapFont-DEmDdRTc.js",
+      "bytes": 33801,
+      "sha256": "d6ded93167d97739a330840fca6409c2b0f50ceda2a6eac13b9112a917127e45"
     },
     {
-      "path": "lyrics-stage/folia/assets/BufferResource-DUhdyAi0.js",
+      "path": "lyrics-stage/folia/assets/BufferResource-CvsqJ45N.js",
       "bytes": 10595,
-      "sha256": "26324c792802f3db581fa4d7c1e49050f68bca98392475397551e571f3d29b64"
+      "sha256": "8176cd2722d6630ed56f4aed17f63e3267c91352207fda0c46c36473628848a6"
     },
     {
-      "path": "lyrics-stage/folia/assets/Cache-CiRh2OWA.js",
+      "path": "lyrics-stage/folia/assets/Cache-heybR9ar.js",
       "bytes": 1098,
-      "sha256": "52a47d7e45e44595dca4b6ec48c2521010dd8954dd6dd4b52eee944e4c4dfbeb"
+      "sha256": "46acc572c09b8bfddf8acece7e3fc0bcf0752f2fafc829ac68cea00ddc10ddca"
     },
     {
-      "path": "lyrics-stage/folia/assets/CanvasPool-Z1PNDzeM.js",
+      "path": "lyrics-stage/folia/assets/CanvasPool-oGOHb8Yt.js",
       "bytes": 801,
-      "sha256": "0bbd2e7a846cdf359417d327f0c97bde556e35141161e41fb152b5c80dd45e65"
+      "sha256": "a96551f62827ae1cff89438e5cd6b12551ba5d16416cf1412e969964b93941a9"
     },
     {
-      "path": "lyrics-stage/folia/assets/CanvasRenderer-83V-5ovx.js",
+      "path": "lyrics-stage/folia/assets/CanvasRenderer-8AvVWwrl.js",
       "bytes": 26770,
-      "sha256": "50f718baf105727211ef2a8ccf729039dbbeae4ac9f1e0a55e604d53f454c3fc"
+      "sha256": "1caa723c3fbc2cf6133e51d128697c924e47d43c4ef453df0e052c797bbfe6f8"
     },
     {
-      "path": "lyrics-stage/folia/assets/CanvasSource-DNxT-ztT.js",
-      "bytes": 36517,
-      "sha256": "d78e40097d0afb561f00a1ab9b297b6f660958bd2c0e0f87aa31bcb7cfe39ff2"
+      "path": "lyrics-stage/folia/assets/CanvasSource-C9hpFl-y.js",
+      "bytes": 36521,
+      "sha256": "908c278b76f7bd1e457f3383df077a40bf29b407721f3b6dc5c9cd67810b244f"
     },
     {
       "path": "lyrics-stage/folia/assets/DsdiffParser-DBY6ubHr.js",
@@ -10414,19 +10424,19 @@
       "sha256": "e7eb7f2049f8c03619c69340625447e0a250082c69e496532c0cb2347b76841a"
     },
     {
-      "path": "lyrics-stage/folia/assets/FederatedEventTarget-BcGsH6IL.js",
+      "path": "lyrics-stage/folia/assets/FederatedEventTarget-BCGuxfKu.js",
       "bytes": 42629,
-      "sha256": "a773b4eeed76507b36223b566ebd0301c51db6a55d4f04c6e5b753d5a38fa1b0"
+      "sha256": "1d794f5caa13cd77f32598219c48511e55a1362b4fcace22f192923d75c10081"
     },
     {
-      "path": "lyrics-stage/folia/assets/Filter-BTwOyX9Y.js",
-      "bytes": 2372,
-      "sha256": "1832039a9b1156a4754ea974a27fae1d76c01a5634dce167793019e4555d5eb0"
+      "path": "lyrics-stage/folia/assets/Filter-DoJaSZh7.js",
+      "bytes": 2367,
+      "sha256": "a8e46c934db9aa1014b618012508799a60fb3c7294c06fad83039bf9270a86e7"
     },
     {
-      "path": "lyrics-stage/folia/assets/FilterSystem-aydZF3F8.js",
-      "bytes": 39529,
-      "sha256": "97e22cd248da34a9bd58c3a0026493b659b915096ab00c1da94e95c45f31c800"
+      "path": "lyrics-stage/folia/assets/FilterSystem-7CzFa8nU.js",
+      "bytes": 39524,
+      "sha256": "4aa822cae7141eccfb22b5f0c74d264a37ccd9442315ac202c05f78868f84caf"
     },
     {
       "path": "lyrics-stage/folia/assets/FlacParser-DwhlxhP4.js",
@@ -10434,19 +10444,19 @@
       "sha256": "3889d3720bb37692e08055b7cb47046a641eae696c102aff45e98410594a5e90"
     },
     {
-      "path": "lyrics-stage/folia/assets/GCManagedHash-CvrBFcof.js",
+      "path": "lyrics-stage/folia/assets/GCManagedHash-C9U_lGNG.js",
       "bytes": 19776,
-      "sha256": "1de0a0d3ac180a99233ae6f62f4e2dd411b22045eee6037ed41f69b9fea8d9a3"
+      "sha256": "1812f5abb15dedd38745df19ed561f43514bfbc6b0b4826240f2056d776dee8d"
     },
     {
-      "path": "lyrics-stage/folia/assets/Geometry-BcibPc_N.js",
+      "path": "lyrics-stage/folia/assets/Geometry-By3rQItY.js",
       "bytes": 24132,
-      "sha256": "74b25b3d5852c9164d3704d724e6bddbe93af606b74aa90a2716ede6f3cf5dce"
+      "sha256": "415029f08c0b91c6d7ab6ae2954a1228b4d02fa8c5396fad52f7a6030f6e7781"
     },
     {
-      "path": "lyrics-stage/folia/assets/GraphicsContext-D63uYTfV.js",
+      "path": "lyrics-stage/folia/assets/GraphicsContext-VX2Ij-xh.js",
       "bytes": 61607,
-      "sha256": "de978f6a962c11edc3bc7d1829a2c0ab54af25db6db453c6e32fad0b0f442869"
+      "sha256": "6de07eb5fce4778ff8f195ef82fc155b5b033f4984349436599affc0e54d6d6f"
     },
     {
       "path": "lyrics-stage/folia/assets/ID3v2Parser-D8rhUlm5.js",
@@ -10479,24 +10489,24 @@
       "sha256": "464f4f76f8608035e7411e6535d1de7c88d176cc8d7ac66264ecfa9415a2dd16"
     },
     {
-      "path": "lyrics-stage/folia/assets/RenderTargetSystem-C_oFzCbA.js",
-      "bytes": 52425,
-      "sha256": "59d151c09a04b4c633c0320c40bf56af0ad4c4b5a2545151de0c4e533f02b9d5"
+      "path": "lyrics-stage/folia/assets/RenderTargetSystem-BuLBoxHl.js",
+      "bytes": 52413,
+      "sha256": "d6cf964138cc2f0cf3e43dd12e9ceb64639c2027003bef7c7292ac5e0466a2a2"
     },
     {
-      "path": "lyrics-stage/folia/assets/Shader-CX50f7cN.js",
-      "bytes": 38631,
-      "sha256": "a57a3699bc9f8a00386aaeefdb5c730ecfffc6e31152af84aca1cc0181f98908"
+      "path": "lyrics-stage/folia/assets/Shader-DwRVIl2v.js",
+      "bytes": 38627,
+      "sha256": "fb9531141a73e577d21b533a9aa69d60447ed06ec5911f761c0e06d39d4a9b8b"
     },
     {
-      "path": "lyrics-stage/folia/assets/VisualizerTempera-DJibJI5t.js",
+      "path": "lyrics-stage/folia/assets/VisualizerTempera-CjdnTnIB.js",
       "bytes": 7601,
-      "sha256": "f984c8a6718d4059c2bc6b073597d930293498d179991c8bb52c91479e3bd258"
+      "sha256": "45447ab976bc2f1b92b8b8ec84ff8dc3afde9ea12be862f5c38d92d1e72f7800"
     },
     {
-      "path": "lyrics-stage/folia/assets/VividLightBlend-CJLwWfAv.js",
+      "path": "lyrics-stage/folia/assets/VividLightBlend-Cehs5wmC.js",
       "bytes": 37440,
-      "sha256": "cb194e44e1e9b66f7ea9d091df3587446cf6095aa0a63f2970f5c5cc47b50c0f"
+      "sha256": "4280e701041014fa9446b75d717811c6af150884ca8be0ded107a55e7b6687b1"
     },
     {
       "path": "lyrics-stage/folia/assets/WavPackParser-DIVeYcjp.js",
@@ -10509,14 +10519,14 @@
       "sha256": "3f13213a1526879dfac246825a61d0c02b666b26e3e169d02e8b0295e01c5cb9"
     },
     {
-      "path": "lyrics-stage/folia/assets/WebGLRenderer-BhWbtxEq.js",
+      "path": "lyrics-stage/folia/assets/WebGLRenderer-T5g2Q_3z.js",
       "bytes": 68804,
-      "sha256": "4ff95ce1b451e242f2930542b74bef9a2b01fb0828d7372e60b7b45653cc334b"
+      "sha256": "009a36581437d2a6cb4381409074a9c092a0cc8333554089943b6fdc7d4c3620"
     },
     {
-      "path": "lyrics-stage/folia/assets/WebGPURenderer-CU_zVbkW.js",
-      "bytes": 38846,
-      "sha256": "3546ada51861561136e8e0b9311f81a0db921128bc77d4d7dd915381bf5a13ad"
+      "path": "lyrics-stage/folia/assets/WebGPURenderer-CE9qTPAW.js",
+      "bytes": 38851,
+      "sha256": "951859688eaaad65068ffdcb91d67e5aa4efeee5a197abebb29f7c6132776c2d"
     },
     {
       "path": "lyrics-stage/folia/assets/avatar-midori-C0CTORYp.png",
@@ -10604,19 +10614,19 @@
       "sha256": "4b69364b216cd650ba242cb2a0cfbc88c14b8a5009f1b24fb7fd38651699e565"
     },
     {
-      "path": "lyrics-stage/folia/assets/bootstrap-B_B44ozr.js",
-      "bytes": 1300850,
-      "sha256": "f75962f82be088a295a5add84a3922396303801d65b413bb7c4aad8ba4d24f5d"
+      "path": "lyrics-stage/folia/assets/bootstrap-DzEXSo6d.js",
+      "bytes": 1301437,
+      "sha256": "5494040dfc0097f0011ebb6d8eb004c2e89eb36317942fda15f96c0bde52fe4d"
     },
     {
-      "path": "lyrics-stage/folia/assets/browserAll-DDKtvOoD.js",
+      "path": "lyrics-stage/folia/assets/browserAll-CHDPQA-0.js",
       "bytes": 286,
-      "sha256": "d38d0440fe1eab35211b8dca4ca8bf9b0500cc5fa6bb731dc7659dadc8025ef5"
+      "sha256": "3daafed350ba74379dbc51ecacb767c40c8ee4b6e17bc17f072b3745d2916789"
     },
     {
-      "path": "lyrics-stage/folia/assets/canvasUtils-zi3QtfZV.js",
+      "path": "lyrics-stage/folia/assets/canvasUtils-BwEugc1L.js",
       "bytes": 6054,
-      "sha256": "7e638eb0670266151c47537c77952604ad4d393b0565bc9961cc0fd1abfb8f7b"
+      "sha256": "191088c1dee414b533d651b8171ab49b88f334e3c49bed4b2c738b69bf8e44be"
     },
     {
       "path": "lyrics-stage/folia/assets/colorMix-BxoitSzb.js",
@@ -10624,14 +10634,14 @@
       "sha256": "b5e25f1ccf03e1bacf733d588b052868429e6084b4a822848366b3beeb6ef789"
     },
     {
-      "path": "lyrics-stage/folia/assets/createSonnetPixiRuntime-Du0bb4ob.js",
+      "path": "lyrics-stage/folia/assets/createSonnetPixiRuntime-z4codi4B.js",
       "bytes": 248347,
-      "sha256": "f10b613fff2bffac7c90565d8853d437d6a949e1409c6a71b74ed6fc1c437ce3"
+      "sha256": "1a5a033d6d53d37e81c60514b82c6999ccd764a4a360983c237a37ca9e845736"
     },
     {
-      "path": "lyrics-stage/folia/assets/createTemperaPixiRuntime-BsQJJ72o.js",
+      "path": "lyrics-stage/folia/assets/createTemperaPixiRuntime-C1WY6UPA.js",
       "bytes": 96628,
-      "sha256": "aaabf888fba63426d170ec88b77d66e5e7cf0a46b29c7df7262a79c141ee269c"
+      "sha256": "dda60ad2bf37ee40d4dc42b1427cd5399151cd94ce78c0cbad2269ed49aa4845"
     },
     {
       "path": "lyrics-stage/folia/assets/db-BADYmOgt.js",
@@ -10644,9 +10654,9 @@
       "sha256": "1b090c52475c653f935ea4dabffa3fd8cd0eefef5c907ae9b0a67d65d3d19f35"
     },
     {
-      "path": "lyrics-stage/folia/assets/getTextureBatchBindGroup-D_ptOZmr.js",
+      "path": "lyrics-stage/folia/assets/getTextureBatchBindGroup-DfKenBHL.js",
       "bytes": 340,
-      "sha256": "820ca58e930a58c23b3a34fc906cc99fcb18ed62657932c9611228086fbb072b"
+      "sha256": "1816142d4ad87882a6bbd44e76380f7e4b05383023436e413789d182445a83dd"
     },
     {
       "path": "lyrics-stage/folia/assets/happy1-Cv5XJc7k.png",
@@ -10659,9 +10669,9 @@
       "sha256": "cffe4a4fe5608706e2522de3b4cd8cc174357a9310493f107553794831312054"
     },
     {
-      "path": "lyrics-stage/folia/assets/init-CxXrLk5x.js",
+      "path": "lyrics-stage/folia/assets/init-Cch0KT-c.js",
       "bytes": 122,
-      "sha256": "676ca134696a35d63f40d909d64dc22ae4bc4e35a3a4badbcc5a251898274abd"
+      "sha256": "4bf0b22e83eab6520d1b572ee88b7204cbf3117c83b5d59d713a06c3fe8a43c1"
     },
     {
       "path": "lyrics-stage/folia/assets/layout-CG048HXa.js",
@@ -10669,19 +10679,19 @@
       "sha256": "8a851781beb20d55d9acce7767952c318fec77cabe6b884f795938728ebae594"
     },
     {
-      "path": "lyrics-stage/folia/assets/lib-Bc7l4dvU.js",
-      "bytes": 314016,
-      "sha256": "fc3691332876a795448335572e9e363e06a6ae6fdbcb876da1e559ae764565e7"
+      "path": "lyrics-stage/folia/assets/lib-DecAFkXN.js",
+      "bytes": 314042,
+      "sha256": "2ef6f5b0aa35d3dcf90783f52655e74c8233305e2c9048936a4073a4398ef107"
     },
     {
-      "path": "lyrics-stage/folia/assets/loadPixi-Dc7-VaBm.js",
+      "path": "lyrics-stage/folia/assets/loadPixi-DluoRmON.js",
       "bytes": 7846,
-      "sha256": "e654bd5c428701304779c72ca1db3a9ed7f2dbc16621626a1ef1478570bdfe6e"
+      "sha256": "9c0d090fa13717980583e810cfce4dbef54b2b612660abd84d3090e6b1b01338"
     },
     {
-      "path": "lyrics-stage/folia/assets/localMusicService-DGEv9vK0.js",
-      "bytes": 2292205,
-      "sha256": "2b4e9672c7d28b335cc02f884b4547b07016e1d6f4cb57b858b3bb201c3d63cb"
+      "path": "lyrics-stage/folia/assets/localMusicService-_LhUaB2o.js",
+      "bytes": 2292761,
+      "sha256": "e1f111665815002bba110646a1ac2ff9f5f39d3343e2de57ba613a96d91165ba"
     },
     {
       "path": "lyrics-stage/folia/assets/love1-DlyFBRdf.png",
@@ -10699,9 +10709,9 @@
       "sha256": "36bea6b7efa145b7e55b7fc38243211a10917d89fddb19a1d17abfe8b91c3472"
     },
     {
-      "path": "lyrics-stage/folia/assets/main-BWjSinnL.js",
+      "path": "lyrics-stage/folia/assets/main-DzdiBUDn.js",
       "bytes": 31366,
-      "sha256": "4f99cdf620e5859647e9d63ce30dff2ddc6adf79e460dd0138c9fb2492622ad1"
+      "sha256": "e193fed38801deb12ccf796154963bb56bec2a08d2b10861044e4a4db6bb03cf"
     },
     {
       "path": "lyrics-stage/folia/assets/md5-DkZVrNru.js",
@@ -10839,9 +10849,9 @@
       "sha256": "49115f2c3af198b9a1c1516458d7132a524a6a872e69f2431d61b0830625154a"
     },
     {
-      "path": "lyrics-stage/folia/assets/webworkerAll-BhCsNJPQ.js",
+      "path": "lyrics-stage/folia/assets/webworkerAll-DSI8cF8f.js",
       "bytes": 62,
-      "sha256": "3f7b65d1c99fdb5abf57dc08b0e48bf74d6ccd74da23521221ea88227f795e44"
+      "sha256": "5f74c386ceb1e50ea1aea8bb6a8fdb57f0121e3c08024c183cfb124130389c28"
     },
     {
       "path": "lyrics-stage/folia/assets/wordColoring-BBDjeB1Z.js",
@@ -10861,7 +10871,7 @@
     {
       "path": "lyrics-stage/folia/index.html",
       "bytes": 1801,
-      "sha256": "0f79edee1fb7f8274adb58bed5a54d8ad5a652573139fca680b1f04b9df599ee"
+      "sha256": "0f3c96c24b4545520e1cf02a44a6819ae34fc31de0107141271c3beba127580f"
     },
     {
       "path": "lyrics-stage/folia/runtime-config.js",
@@ -10875,6 +10885,21 @@
     }
   ],
   "evidence_files": [
+    {
+      "path": "vendor/folia/build-evidence/local-audition-typecheck.log",
+      "bytes": 48,
+      "sha256": "a9634e9025cb89d6efc4aa1e4341e56c54dac6770500ba216834bd0dada2a5e0"
+    },
+    {
+      "path": "vendor/folia/build-evidence/local-audition-unit-tests.log",
+      "bytes": 622,
+      "sha256": "0bc476a429a3f60f3538ab0439f2d4334aefb4a214c871eb8747b86693bd1596"
+    },
+    {
+      "path": "vendor/folia/build-evidence/local-audition-vite-build.log",
+      "bytes": 7875,
+      "sha256": "97a1cfd615f5765df87c6e0836713ff23b115858f7239e18bcb1d87d7f3e5862"
+    },
     {
       "path": "vendor/folia/build-evidence/typecheck.log",
       "bytes": 61,
@@ -10902,10 +10927,94 @@
     }
   ],
   "counts": {
-    "source_vendor_files": 1023,
-    "payload_files_excluding_manifest": 2038,
-    "archive_files": 2039,
+    "source_vendor_files": 1027,
+    "payload_files_excluding_manifest": 2042,
+    "archive_files": 2043,
     "deployed_files": 105,
-    "source_payload_bytes_excluding_manifest": 29972442
+    "source_payload_bytes_excluding_manifest": 29995294
+  },
+  "historical_initial_packaging": {
+    "source_selection": {
+      "reference": "Recovered production editable source matching the current deployed renderer after the September 8 rollback",
+      "rejected_reference": "September 7 flash/unified-lyrics experiment; the later recovery record explicitly reverted its Folia runtime changes",
+      "runtime_source_tests_assets_package_lockfile": "Byte-identical to recovered production source",
+      "modified_production_build_inputs": [
+        "vite.config.ts"
+      ],
+      "build_configuration_change": "Replace Git/CI metadata and commit-name network lookup with deterministic source-distribution version labels; no renderer code changes",
+      "excluded_recovered_metadata": [
+        "realeco-release",
+        ".git",
+        ".gemini",
+        ".codegraph"
+      ],
+      "private_originals_modified": false
+    },
+    "artifact_correspondence": {
+      "candidate_dist_equals_deployed_exactly": true,
+      "candidate_and_original_production_file_counts": 105,
+      "same_path_same_bytes_vs_original_production": 96,
+      "changed_html_entries": 1,
+      "renamed_js_chunks": 8,
+      "normalized_all_files_equal": true,
+      "normalization": "Replace each actual hashed asset basename with its stem-HASH.extension equivalent, then replace the original informational version label with the deterministic source-distribution version label; compare all file bytes",
+      "claim_boundary": "Artifact preservation plus existing targeted tests, not new browser, live audio or Spotify acceptance testing"
+    },
+    "build": {
+      "observed_environment": {
+        "node": "v24.16.0",
+        "npm": "11.17.0",
+        "platform": "Linux/WSL"
+      },
+      "cwd": "vendor/folia",
+      "install_command": "npm ci --ignore-scripts",
+      "typecheck_command": "npm run typecheck",
+      "build_command": "MIDORI_LYRIC_STAGE_BUILD=1 ELECTRON=true node node_modules/vite/bin/vite.js build",
+      "test_command": "npm run test:unit -- --maxWorkers=2 --testTimeout=20000 test/unit/visualizer test/unit/lyrics test/unit/hooks/nowPlayingClock.test.ts test/unit/services/nowPlayingProvider.test.ts",
+      "existing_evidence_reused_without_rebuild": true,
+      "typecheck_exit_code": 0,
+      "vite_exit_code": 0,
+      "vite_version": "8.2.1",
+      "transformed_modules": 3639,
+      "vite_build_seconds": 14.17,
+      "latest_unit_result": {
+        "exit_code": 0,
+        "passed_tests": 711,
+        "skipped_tests": 1,
+        "passed_test_files": 87,
+        "skipped_test_files": 1,
+        "duration_seconds": 73.72
+      },
+      "previous_attempts": [
+        {
+          "evidence": "unit-tests.log",
+          "exit_code": 1,
+          "passed_tests": 700,
+          "failed_tests": 1,
+          "skipped_tests": 1,
+          "note": "Default 5000ms Tempera test timeout; two requested provider/clock paths were incorrect"
+        },
+        {
+          "evidence": "unit-tests-limited-workers.log",
+          "exit_code": 1,
+          "passed_tests": 710,
+          "failed_tests": 1,
+          "skipped_tests": 1,
+          "note": "Correct paths and two workers; default 5000ms Tempera test timeout"
+        }
+      ],
+      "warnings": [
+        "Chunks exceed 500 kB",
+        "Vite plugin timing report",
+        "Earlier artifact-comparison tool timeout superseded by completed normalized comparison"
+      ],
+      "not_verified": [
+        "Full repository unit suite",
+        "Browser visual regression",
+        "Live Spotify or remote lyric providers",
+        "Electron packaging",
+        "Cross-platform byte-identical rebuild"
+      ]
+    }
   }
 }

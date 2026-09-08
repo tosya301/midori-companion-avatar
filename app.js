@@ -1,4 +1,9 @@
 import { publicFetch } from './public-api.js';
+import { offerLocalAudition, stopLocalAudition } from './assets/local-audition/player.js';
+document.querySelector('#localAuditionOpen')?.addEventListener('click', (event) => {
+  setMidoriInputContext('spotify');
+  void offerLocalAudition(event.currentTarget, { manual: true });
+});
 const stage = document.querySelector('.stage');
 const avatar = document.querySelector('#avatar');
 const voiceRingWave = document.querySelector('.voice-ring-wave');
@@ -3638,6 +3643,7 @@ function bindSiteIconDragHandlers(state) {
       event.stopPropagation();
       setMidoriInputContext(link.dataset.familyCurrent || link.dataset.site || '');
       midoriInput?.focus({ preventScroll: true });
+      if ((link.dataset.familyCurrent || link.dataset.site) === 'spotify') void offerLocalAudition(contextButton);
       return;
     }
     if (!event.target.closest('.site-icon-target')) return;
@@ -4552,6 +4558,8 @@ function queuedSpeechLabel() {
 function queueSpeechItem(item) {
   const stable = normalizeRecentItem(item);
   if (!stable) return;
+  // In-memory event evidence only; never restore this flag from recent history.
+  stable.onboardingSpeech = item.onboardingSpeech === true;
   speechQueue.push(stable);
 
   if (!liveAudioUnlocked) {
@@ -4581,6 +4589,12 @@ async function playNextQueuedSpeech() {
 
   try {
     await loadAndPlayAudio(item.audioUrl, item, { addToRecent: false, label: 'Playing Agent audio' });
+    if (generation === speechPlaybackGeneration && currentSpeechItem === item &&
+        !audio.paused && audioCtx?.state === 'running' && item.onboardingSpeech &&
+        currentPlaybackMeta?.eventId === item.eventId &&
+        new URL(audio.currentSrc || audio.src, location.href).pathname === item.audioUrl) {
+      completePublicOnboarding();
+    }
   } catch (err) {
     if (generation !== speechPlaybackGeneration) return;
     const rawMessage = err?.message || String(err);
@@ -4746,11 +4760,13 @@ async function handleSpeechEvent(event) {
     createdAt: event.created_at || new Date().toISOString(),
     emotion: event.emotion,
     visualState: event.visual_state || event.visualState || '',
+    onboardingSpeech: isPublicAgentSpeech(event),
   };
   queueSpeechItem(meta);
 }
 
 function stopPublicPlayback() {
+  stopLocalAudition();
   speechPlaybackGeneration += 1;
   speechQueue.length = 0;
   speechQueueStarting = false;
@@ -4780,6 +4796,32 @@ document.querySelector('#stopBtn')?.addEventListener('click', async () => {
   }
 });
 
+const PUBLIC_ONBOARDING_KEY = 'midori.public.agent-speech-played.v1';
+
+function isPublicAgentSpeech(event) {
+  // The public bridge distinguishes speech from uploaded tests/unknown audio.
+  return event.source === 'public-api' && event.audio_kind === 'speech' &&
+    !event.replay && !event.replay_only &&
+    /^\/media\/[a-f0-9]{32}\.(wav|mp3|ogg|m4a)$/.test(event.audio_url || '');
+}
+
+function collapsePublicOnboarding() {
+  const details = document.querySelector('#publicOnboarding');
+  if (!details || !details.hidden) return;
+  details.append(document.querySelector('#publicIntro'), document.querySelector('.sample-controls'));
+  details.hidden = false;
+  details.open = false;
+}
+
+function completePublicOnboarding() {
+  collapsePublicOnboarding();
+  try { localStorage.setItem(PUBLIC_ONBOARDING_KEY, '1'); } catch { /* Best effort. */ }
+}
+
+try {
+  if (localStorage.getItem(PUBLIC_ONBOARDING_KEY) === '1') collapsePublicOnboarding();
+} catch { /* Storage restrictions must not break playback or onboarding. */ }
+
 async function setupPublicSamples() {
   const select = document.querySelector('#sampleSelect');
   const play = document.querySelector('#samplePlayBtn');
@@ -4789,7 +4831,7 @@ async function setupPublicSamples() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const catalog = await response.json();
     const samples = (Array.isArray(catalog.samples) ? catalog.samples : []).filter(item =>
-      /^[a-z0-9-]+\.wav$/.test(item.file) && typeof item.label === 'string' && typeof item.id === 'string');
+      /^[a-z0-9-]+\.(wav|mp3)$/.test(item.file) && typeof item.label === 'string' && typeof item.id === 'string');
     if (!samples.length) throw new Error('样音清单为空');
     select.replaceChildren(...samples.map(item => new Option(item.label, item.id)));
     select.disabled = false;
@@ -4799,7 +4841,8 @@ async function setupPublicSamples() {
       const item = current();
       status.textContent = item.kind === 'synthetic-speech'
         ? `${item.label} · AI 合成语音，非本人录音；本地播放，不调用 TTS。`
-        : '原创提示测试音；本地播放，不调用 TTS。';
+        : item.kind === 'generated-tone' ? '原创提示测试音；本地播放，不调用 TTS。'
+          : `${item.label} · 用户提供的测试音频，来源类型未注明；本地播放，不调用 TTS。`;
     };
     select.addEventListener('change', describe);
     play.addEventListener('click', () => {
