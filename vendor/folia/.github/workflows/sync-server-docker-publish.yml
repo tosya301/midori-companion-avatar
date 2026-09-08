@@ -1,0 +1,106 @@
+name: sync-server-docker-publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sync-server/package.json'
+  workflow_dispatch:
+    inputs:
+      force_republish:
+        description: 'Allow rebuilding an existing version tag after a partial or broken publish'
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-server-docker-publish
+  cancel-in-progress: false
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/folia-sync-server
+
+jobs:
+  prepare:
+    name: Validate sync-server release
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      created: ${{ steps.meta.outputs.created }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+
+      - name: Validate version
+        id: meta
+        env:
+          FORCE_REPUBLISH: ${{ inputs.force_republish || false }}
+        run: |
+          if [[ "${GITHUB_REF}" != "refs/heads/main" ]]; then
+            echo "Sync-server stable releases must run from main." >&2
+            exit 1
+          fi
+          VERSION="$(node -e "const v=require('./sync-server/package.json').version; if(!/^[0-9]+\\.[0-9]+\\.[0-9]+$/.test(v)) throw new Error('sync-server version must be A.B.C'); process.stdout.write(v)")"
+          if [[ "${GITHUB_EVENT_NAME}" == "push" ]]; then
+            PREVIOUS_VERSION="$(git show HEAD^:sync-server/package.json 2>/dev/null | node -e "let s='';process.stdin.on('data',c=>s+=c).on('end',()=>{if(s)process.stdout.write(JSON.parse(s).version)})")"
+            if [[ -n "${PREVIOUS_VERSION}" && "$(printf '%s\n%s\n' "${PREVIOUS_VERSION}" "${VERSION}" | sort -V | tail -n1)" != "${VERSION}" ]]; then
+              echo "Version ${VERSION} must be greater than ${PREVIOUS_VERSION}." >&2
+              exit 1
+            fi
+            if [[ "${PREVIOUS_VERSION}" == "${VERSION}" ]]; then
+              echo "Version did not change." >&2
+              exit 1
+            fi
+          fi
+          if [[ "${FORCE_REPUBLISH}" != "true" ]] && docker manifest inspect "${REGISTRY}/${IMAGE_NAME}:${VERSION}" >/dev/null 2>&1; then
+            echo "${IMAGE_NAME}:${VERSION} already exists." >&2
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> "$GITHUB_OUTPUT"
+
+  build:
+    name: Build and publish sync-server
+    needs: prepare
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push sync-server
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: deploy/docker/images/sync-server.Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.prepare.outputs.version }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.version=${{ needs.prepare.outputs.version }}
+            org.opencontainers.image.created=${{ needs.prepare.outputs.created }}
+          cache-from: type=gha,scope=folia-sync-server
+          cache-to: type=gha,mode=max,scope=folia-sync-server

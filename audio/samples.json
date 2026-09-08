@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "samples": [
+    {
+      "id": "tone",
+      "label": "测试音-提示音",
+      "file": "demo-tone.wav",
+      "kind": "generated-tone",
+      "duration_seconds": 4.0,
+      "license": "MIT"
+    },
+    {
+      "id": "human-01",
+      "label": "测试语音-人声01",
+      "file": "test-voice-human-01.wav",
+      "kind": "synthetic-speech",
+      "text": "你好呀，我是阿绿。听得到吗？我们可以开始聊天啦。",
+      "duration_seconds": 5.76,
+      "sample_rate": 48000,
+      "listening_acceptance": "accepted-by-maintainer",
+      "inclusion_approval": "maintainer-approved-for-public-version",
+      "rights": "See ../ASSET_RIGHTS.md; synthetic sample, not an original human recording or a blanket MIT voice grant."
+    },
+    {
+      "id": "human-02",
+      "label": "测试语音-人声02",
+      "file": "test-voice-human-02.wav",
+      "kind": "synthetic-speech",
+      "text": "你好呀，我是阿绿。听得到吗？我们可以开始聊天啦。",
+      "duration_seconds": 4.8785,
+      "sample_rate": 48000,
+      "listening_acceptance": "accepted-by-maintainer",
+      "inclusion_approval": "maintainer-approved-for-public-version",
+      "rights": "See ../ASSET_RIGHTS.md; synthetic sample, not an original human recording or a blanket MIT voice grant."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+/* Only the five shortcut families; preserve accepted main shells and label type. */
+.shortcut-family { --family-accent:57,123,89; --family-chevron:rgba(30,45,36,.64); --family-mini-art:22px; --family-mini-box:30px; --family-shift-y:0px; }
+html[data-theme="night"] .shortcut-family { --family-accent:190,208,238; --family-chevron:rgba(255,255,255,.96); }
+.shortcut-family[data-family-open="true"] { z-index:30; }
+.shortcut-family[data-site="gmail"]:not([data-family-current="gmail"]) .site-icon-badge { display:none!important; }
+.shortcut-family .family-expander {
+  appearance:none; position:absolute; right:9px; top:0;
+  width:9px; height:var(--site-icon-size); min-height:0; padding:0;
+  border:0; border-radius:5px; display:flex; align-items:center; justify-content:center; z-index:6;
+  color:var(--family-chevron); background:transparent; box-shadow:none;
+  cursor:pointer; transform:none; touch-action:manipulation;
+}
+.shortcut-family .family-expander:hover,.shortcut-family .family-expander:focus-visible {
+  color:var(--family-chevron); background:transparent; box-shadow:none; transform:none;
+}
+/* No side-light layer. Only the empty right rim owns the pointer reveal. */
+.family-expander svg {
+  position:relative; width:10px; height:14px; flex-shrink:0; pointer-events:none;
+  filter:drop-shadow(0 .5px 1px rgba(0,0,0,.18)) drop-shadow(0 0 2px rgba(255,255,255,.24));
+  opacity:0; translate:0px 0;
+  transition:opacity 300ms cubic-bezier(.2,.7,.2,1),translate 300ms cubic-bezier(.2,.7,.2,1),transform 200ms ease;
+}
+.family-expander:hover svg,.family-expander:focus-visible svg { opacity:1; translate:5px 0; }
+.shortcut-family[data-family-open="true"] .family-expander svg { transform:rotate(180deg); }
+.shortcut-family .family-expander:focus-visible,.shortcut-family .family-option:focus-visible { outline:2px solid rgba(var(--family-accent),.75); outline-offset:2px; }
+.family-options {
+  position:absolute; left:calc(100% + 3px); top:calc(var(--site-icon-size) * .5);
+  transform:translateY(-50%); translate:0 var(--family-shift-y); display:grid; gap:5px; padding:3px;
+  pointer-events:auto; isolation:isolate;
+}
+.family-options[hidden] { display:none!important; }
+/* Native non-modal top layer keeps options clickable above the existing timer,
+   without moving any accepted scene layer or changing DOM event ownership. */
+.shortcut-family[data-family-side] .family-options[popover] {
+  position:fixed; left:var(--family-menu-x,0px); top:var(--family-menu-y,0px); right:auto; bottom:auto;
+  transform:none; translate:none; margin:0; border:0; background:transparent; overflow:visible;
+  width:max-content; height:max-content; color:inherit; rotate:var(--icon-rotate,0deg);
+}
+.family-options[popover]::backdrop { background:transparent; pointer-events:none; }
+.shortcut-family[data-family-side="left"] .family-options { left:auto; right:calc(100% + 3px); }
+.shortcut-family .family-option {
+  appearance:none; display:grid; place-items:center; position:relative;
+  width:var(--family-mini-box); height:var(--family-mini-box); min-height:0; padding:3px;
+  border:1px solid rgba(255,255,255,.46); border-radius:26%;
+  background:rgba(255,255,255,.20); box-shadow:0 3px 9px rgba(19,40,36,.10),inset 0 1px rgba(255,255,255,.48);
+  backdrop-filter:blur(10px); color:inherit; cursor:pointer; transform:none; touch-action:manipulation;
+  transition:background 160ms ease,box-shadow 160ms ease;
+}
+.shortcut-family .family-option:hover { background:rgba(255,255,255,.40); box-shadow:0 3px 12px rgba(var(--family-accent),.19); transform:none; }
+.family-option img { width:var(--family-mini-art); height:var(--family-mini-art); object-fit:contain; border-radius:22.5%; display:block; pointer-events:none; }
+.family-option::after {
+  content:attr(data-name); position:absolute; left:calc(100% + 7px); top:50%; transform:translateY(-50%);
+  width:max-content; max-width:145px; padding:4px 7px; border-radius:6px; background:rgba(33,42,40,.88); color:#fff;
+  font:500 10px/1.25 system-ui,sans-serif; opacity:0; visibility:hidden; pointer-events:none; transition:opacity 120ms ease;
+}
+.shortcut-family[data-family-side="left"] .family-option::after { left:auto;right:calc(100% + 7px); }
+.family-option:hover::after,.family-option:focus-visible::after { opacity:1;visibility:visible; }
+.family-options.is-swapping .family-option::after { display:none; }
+.shortcut-family[data-family-busy="true"] .family-option { pointer-events:none; }
+.family-swap-ghost { position:fixed; right:auto; bottom:auto; margin:0; padding:0; border:0; background:transparent; z-index:10001; pointer-events:none; object-fit:contain; border-radius:22.5%; transform-origin:0 0; }
+.family-shortcut-note {
+  position:fixed;left:50%;bottom:64px;transform:translateX(-50%);z-index:10002;
+  padding:9px 15px;border-radius:12px;background:rgba(30,42,37,.92);color:#fff;
+  font:12px/1.5 system-ui,sans-serif;pointer-events:none;max-width:calc(100vw - 32px);text-align:center;
+}
+.family-shortcut-note[hidden] {display:none;}
+@media (prefers-reduced-motion:reduce) { .shortcut-family *, .shortcut-family *::before, .shortcut-family *::after {transition:none!important;} }

@@ -1,0 +1,2 @@
+# Runtime and Python tests use the Python 3.10+ standard library only.
+# No pip installation is required for normal use.

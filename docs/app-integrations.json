@@ -1,0 +1,574 @@
+{
+  "schema_version": 1,
+  "catalog_source": "assets/shortcut-families/catalog.mjs",
+  "app_count": 17,
+  "family_count": 5,
+  "context_count": 6,
+  "families": [
+    {
+      "id": "mail",
+      "name": "邮箱",
+      "root": "gmail",
+      "apps": [
+        "gmail",
+        "outlook",
+        "qq"
+      ]
+    },
+    {
+      "id": "music",
+      "name": "音乐",
+      "root": "spotify",
+      "apps": [
+        "spotify",
+        "applemusic",
+        "netease",
+        "qqmusic"
+      ]
+    },
+    {
+      "id": "social",
+      "name": "社交",
+      "root": "x",
+      "apps": [
+        "x",
+        "xiaohongshu",
+        "instagram"
+      ]
+    },
+    {
+      "id": "creative",
+      "name": "创作",
+      "root": "figma",
+      "apps": [
+        "figma",
+        "blender",
+        "photoshop",
+        "aftereffects"
+      ]
+    },
+    {
+      "id": "video",
+      "name": "视频",
+      "root": "youtube",
+      "apps": [
+        "youtube",
+        "bilibili",
+        "tiktok"
+      ]
+    }
+  ],
+  "compatibility": {
+    "harnesses": [
+      "Hermes",
+      "Codex",
+      "Pi",
+      "OpenClaw",
+      "Claude Code"
+    ],
+    "statement": "具体兼容性以实测为准",
+    "native_adapters_tested": false,
+    "integration_model": "用户 harness 管理模型、账户、授权和工具；Avatar 只接收最终文本/音频。"
+  },
+  "status_legend": {
+    "website_only": "大图标打开目录网址；名称不是已实现的账户工具。",
+    "context_seam_only": "名称选择输入上下文；需要用户侧 adapter 执行任务，不代表账户集成可用。",
+    "local_launch_disabled": "目录保留 launch 标记，但公开版禁用本地启动且无预置路径。"
+  },
+  "security_rules": [
+    "账户凭据只属于用户侧 harness，不进入仓库、上下文、字幕或语音。",
+    "先只读，账户写入和本地进程启动必须显式授权并核验结果。",
+    "请求结果不确定时不自动重试；不自动切换付费服务。",
+    "不存在可供本图直接调用的各应用原生账户路由。"
+  ],
+  "apps": [
+    {
+      "id": "gmail",
+      "name": "Gmail",
+      "family": "mail",
+      "website": "https://mail.google.com/mail/u/0/#inbox",
+      "context": "gmail",
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#gmail",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.gmail"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        },
+        {
+          "path": "app.js",
+          "symbol": "setMidoriInputContext / submitMidoriInput"
+        }
+      ],
+      "status": "context_seam_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Gmail API/OAuth 或已授权浏览器；先只读邮件，发送/删除另行确认。",
+      "safe_verification": "只读列出测试邮箱的一封邮件；不发信、不标记、不删除。",
+      "missing_work": "邮箱读取、未读计数、草稿与发送适配器；禁止恢复旧私有轮询。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "outlook",
+      "name": "Outlook",
+      "family": "mail",
+      "website": "https://outlook.live.com/mail/0/",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#outlook",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.outlook"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Outlook/Microsoft Graph OAuth 或浏览器；读信与写信分开授权。",
+      "safe_verification": "只读查看测试邮箱；不发送、不修改邮件。",
+      "missing_work": "增加显式 context 与邮箱适配器。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "qq",
+      "name": "QQ邮箱",
+      "family": "mail",
+      "website": "https://mail.qq.com/",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#qq",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.qq"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有邮箱登录或邮件协议授权；不得索要主密码写入仓库。",
+      "safe_verification": "只读查看测试邮箱；不发送邮件。",
+      "missing_work": "增加 context、邮箱协议或浏览器适配器。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "spotify",
+      "name": "Spotify",
+      "family": "music",
+      "website": "https://open.spotify.com/",
+      "context": "spotify",
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#spotify",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.spotify"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        },
+        {
+          "path": "app.js",
+          "symbol": "setMidoriInputContext / submitMidoriInput"
+        }
+      ],
+      "status": "context_seam_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Spotify 授权和播放设备；播放控制由用户 agent 执行，歌词显示不需要 Spotify 登录。",
+      "safe_verification": "先用自造歌词状态验证本地显示；账户适配后只读查询当前播放。",
+      "missing_work": "账户读取/播放控制适配器；用户授权后才控制设备。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested",
+      "optional_public_display_api": {
+        "method": "POST",
+        "path": "/api/lyrics/state",
+        "purpose": "仅向本地歌词舞台提交状态；不读取或控制 Spotify 账户。"
+      }
+    },
+    {
+      "id": "applemusic",
+      "name": "Apple Music",
+      "family": "music",
+      "website": "https://music.apple.com/",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#applemusic",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.applemusic"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Apple Music/MusicKit 或浏览器能力；订阅及播放权限按用户环境验证。",
+      "safe_verification": "先只读网页；账户适配后只读查询媒体信息。",
+      "missing_work": "增加 context 与播放状态/控制适配器。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "netease",
+      "name": "网易云音乐",
+      "family": "music",
+      "website": "https://music.163.com/",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#netease",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.netease"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有网易云音乐授权浏览器或合法可用接口；明确设备控制权限。",
+      "safe_verification": "只读打开网站；不自动登录或改变播放。",
+      "missing_work": "增加 context、曲目读取/播放控制适配器。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "qqmusic",
+      "name": "QQ音乐",
+      "family": "music",
+      "website": "https://y.qq.com/",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#qqmusic",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.qqmusic"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 QQ音乐授权浏览器或合法可用接口；明确设备控制权限。",
+      "safe_verification": "只读打开网站；不自动登录或改变播放。",
+      "missing_work": "增加 context、曲目读取/播放控制适配器。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "x",
+      "name": "X",
+      "family": "social",
+      "website": "https://x.com/",
+      "context": "x",
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#x",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.x"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        },
+        {
+          "path": "app.js",
+          "symbol": "setMidoriInputContext / submitMidoriInput"
+        }
+      ],
+      "status": "context_seam_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 X API 或已授权浏览器；读取、发帖、私信、删除分别授权。",
+      "safe_verification": "先读取用户指定的公开帖子；不发帖、不点赞、不发私信。",
+      "missing_work": "读取/搜索适配器；写入确认和结果核验。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "xiaohongshu",
+      "name": "小红书",
+      "family": "social",
+      "website": "https://www.xiaohongshu.com/explore",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#xiaohongshu",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.xiaohongshu"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有小红书浏览器登录及合规可用能力；发布、评论单独确认。",
+      "safe_verification": "只读打开公开页面；不点赞、评论或发布。",
+      "missing_work": "增加 context 与只读内容适配器；另行实现写入安全门。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "instagram",
+      "name": "Instagram",
+      "family": "social",
+      "website": "https://www.instagram.com/",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#instagram",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.instagram"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Instagram/Meta 授权或浏览器；读取、发布与消息权限分离。",
+      "safe_verification": "只读公开页面；不关注、不发布、不发消息。",
+      "missing_work": "增加 context 与内容/账户适配器。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "figma",
+      "name": "Figma",
+      "family": "creative",
+      "website": "https://www.figma.com/",
+      "context": "figma",
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#figma",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.figma"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        },
+        {
+          "path": "app.js",
+          "symbol": "setMidoriInputContext / submitMidoriInput"
+        }
+      ],
+      "status": "context_seam_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Figma API/OAuth/MCP 或浏览器；用户指定文件且授予最小读取权限。",
+      "safe_verification": "读取用户授权的测试文件元数据；不改设计。",
+      "missing_work": "文件读取/设计操作适配器；写入和导出范围确认。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "blender",
+      "name": "Blender",
+      "family": "creative",
+      "website": null,
+      "context": null,
+      "catalog_launch": "blender",
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#blender",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.blender"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "local_launch_disabled",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "未来由用户显式提供自有 Blender 可执行文件路径和本地启动权限；不得扫描机器或预置路径。",
+      "safe_verification": "当前确认本地启动被拒绝且不创建进程；未来先核验路径和启动授权。",
+      "missing_work": "用户自有路径配置、固定程序白名单、启动确认与不确定结果核验；公开版不提供本地启动实现。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "photoshop",
+      "name": "Adobe Photoshop",
+      "family": "creative",
+      "website": "https://www.adobe.com/products/photoshop.html",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#photoshop",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.photoshop"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Photoshop 安装、许可及明确的脚本/自动化接口；文件范围需授权。",
+      "safe_verification": "当前只打开产品网站；未来仅操作用户创建的临时测试文档。",
+      "missing_work": "增加 context 与本地应用适配器；不假定桌面启动已经可用。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "aftereffects",
+      "name": "Adobe After Effects",
+      "family": "creative",
+      "website": "https://www.adobe.com/products/aftereffects.html",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#aftereffects",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.aftereffects"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 After Effects 安装、许可及明确的脚本/自动化接口；输出路径需授权。",
+      "safe_verification": "当前只打开产品网站；未来仅检查临时测试项目，不渲染收费任务。",
+      "missing_work": "增加 context 与本地应用适配器；渲染前确认资源与输出范围。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "youtube",
+      "name": "YouTube",
+      "family": "video",
+      "website": "https://www.youtube.com/",
+      "context": "youtube",
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#youtube",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.youtube"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        },
+        {
+          "path": "app.js",
+          "symbol": "setMidoriInputContext / submitMidoriInput"
+        }
+      ],
+      "status": "context_seam_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 YouTube API 或浏览器；公开读取和账户写入分离，遵守嵌入限制。",
+      "safe_verification": "先只读用户指定公开视频；不评论、不订阅、不改变账户。",
+      "missing_work": "搜索/内容读取适配器；播放器显示不代表账户工具可用。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "bilibili",
+      "name": "Bilibili",
+      "family": "video",
+      "website": "https://www.bilibili.com/",
+      "context": "bilibili",
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#bilibili",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.bilibili"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        },
+        {
+          "path": "app.js",
+          "symbol": "setMidoriInputContext / submitMidoriInput"
+        }
+      ],
+      "status": "context_seam_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 Bilibili 授权浏览器或合法可用接口；发布、评论、删除分别确认。",
+      "safe_verification": "先只读用户指定公开视频；不投币、不点赞、不发布。",
+      "missing_work": "内容读取/搜索适配器；账户写入确认与结果核验。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    },
+    {
+      "id": "tiktok",
+      "name": "TikTok",
+      "family": "video",
+      "website": "https://www.tiktok.com/",
+      "context": null,
+      "catalog_launch": null,
+      "local_launch_enabled": false,
+      "public_integration_anchor": "docs/FLOATING_ICONS.md#tiktok",
+      "source_anchors": [
+        {
+          "path": "assets/shortcut-families/catalog.mjs",
+          "symbol": "apps.tiktok"
+        },
+        {
+          "path": "assets/shortcut-families/families.js",
+          "symbol": "mount / render / select"
+        }
+      ],
+      "status": "website_only",
+      "adapter_required": true,
+      "native_account_integration_included": false,
+      "desired_provider_harness_permission_config": "用户自有 TikTok 授权或浏览器；读取、发布与消息权限分离。",
+      "safe_verification": "只读打开公开页面；不点赞、评论或发布。",
+      "missing_work": "增加 context 与内容/账户适配器。",
+      "verification_status": "source_mapping_checked; live_provider_not_tested"
+    }
+  ]
+}

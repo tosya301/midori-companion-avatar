@@ -1,0 +1,137 @@
+/* The close-distance layer owns ONLY the SVG and accepted voice canvas. */
+.gachikoi-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  transform-origin: 50% 100%;
+  pointer-events: none;
+}
+body.gachikoi-active,
+body.gachikoi-transitioning { overflow: hidden; }
+/* Let SVG rerasterize at the presented size, even with Freeze enabled.
+   A persistent 3D/backface/will-change layer can magnify an old small bitmap. */
+body.gachikoi-active .gachikoi-layer,
+body.gachikoi-transitioning .gachikoi-layer { will-change: auto; }
+body.gachikoi-active .avatar-sway-frame,
+body.gachikoi-transitioning .avatar-sway-frame {
+  transform: translate(var(--frame-x, 0%), var(--frame-y, 0%)) scale(var(--frame-scale, 1));
+  backface-visibility: visible;
+  will-change: auto;
+}
+/* Screen-pixel nudges affect artwork only, not the separately sized voice.
+   Counter the shared 1.62x scale; baseline calibration returns on exit. */
+body.gachikoi-active .avatar[data-sway-mode="green"] .avatar-sway-frame {
+  translate: 0 calc(-10px / 1.62);
+}
+body.gachikoi-active .avatar[data-sway-mode="white"] .avatar-sway-frame,
+body.gachikoi-active .avatar[data-sway-mode="black"] .avatar-sway-frame {
+  translate: 0 calc(-15px / 1.62);
+}
+body.gachikoi-active .avatar[data-sway-mode="white"] .avatar-sway-frame {
+  translate: calc(-15px / 1.62) calc(-15px / 1.62);
+}
+body.gachikoi-active .avatar[data-sway-mode="classic"] .avatar-sway-frame {
+  translate: 0 calc(-40px / 1.62);
+}
+body.gachikoi-active .avatar[data-sway-mode="swim"] .avatar-sway-frame {
+  --gachikoi-art-scale: 1.05;
+  translate: 0 calc(-110px / 1.62);
+}
+/* Lil artwork only: keep the shared voice/layer geometry unchanged. */
+body.gachikoi-active .avatar[data-sway-mode="lil"] .avatar-sway-frame,
+body.gachikoi-transitioning .avatar[data-sway-mode="lil"] .avatar-sway-frame {
+  /* The avatar's viewport crop remains; do not cut the upward-shifted art
+     against its previous unshifted frame rectangle. */
+  clip-path: none;
+}
+body.gachikoi-active .avatar[data-sway-mode="lil"] .avatar-sway-frame > svg,
+body.gachikoi-transitioning .avatar[data-sway-mode="lil"] .avatar-sway-frame > svg {
+  transform-origin: 50% 100%;
+  /* The controller writes a non-inherited transform directly on this root. */
+}
+body.gachikoi-active .gachikoi-layer { pointer-events: auto; }
+/* The outer gaze/filter layers must not retain a pre-zoom raster either.
+   Keep the accepted Light shadow and layout; restore all hints on exit. */
+body.gachikoi-active .avatar-shell,
+body.gachikoi-transitioning .avatar-shell,
+body.gachikoi-active .avatar,
+body.gachikoi-transitioning .avatar { will-change: auto; }
+body.gachikoi-active .avatar,
+body.gachikoi-transitioning .avatar {
+  transform: translate(calc(var(--look-x, 0) * 6px - 4.6px), calc(var(--look-y, 0) * 5px));
+}
+body.gachikoi-active .avatar,
+body.gachikoi-transitioning .avatar {
+  clip-path: var(--gachikoi-clip, inset(-100vmax));
+  transition: transform 150ms cubic-bezier(0.22, 1, 0.36, 1), filter 160ms ease;
+}
+/* Local size adjustment only: 75% of the already magnified voice canvas.
+   All three clamp bounds are multiplied equally; centering/material stay intact. */
+.gachikoi-layer #voiceVisualizer {
+  transition: opacity 300ms ease, width 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+body.gachikoi-active #voiceVisualizer { width: clamp(207px, 60.75%, 360px); }
+@media (prefers-reduced-motion: reduce) {
+  .gachikoi-layer #voiceVisualizer { transition-duration: 1ms, 1ms; }
+}
+/* Preserve the accepted theme-color transitions and layout; fade only. */
+#midoriInputDock {
+  --gachikoi-fade-ms: 500ms;
+  --gachikoi-hide-delay: 0ms;
+  visibility: visible;
+  transition:
+    opacity var(--gachikoi-fade-ms) ease-in-out,
+    visibility 0s linear var(--gachikoi-hide-delay),
+    --input-dock-bg 220ms ease,
+    --input-dock-line 220ms ease,
+    --input-dock-line-focus 220ms ease,
+    --input-dock-text 220ms ease,
+    --input-dock-placeholder 220ms ease,
+    --input-dock-enter-idle 220ms ease,
+    --input-dock-enter-active 220ms ease,
+    --input-dock-enter-hover 220ms ease,
+    --input-dock-scroll 220ms ease;
+}
+#midoriInputDock.gachikoi-dock-hidden {
+  --gachikoi-fade-ms: 320ms; /* Preserve the accepted hide; reveal is 500ms. */
+  --gachikoi-hide-delay: var(--gachikoi-fade-ms);
+  visibility: hidden;
+  opacity: 0 !important;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  #midoriInputDock,
+  #midoriInputDock.gachikoi-dock-hidden { --gachikoi-fade-ms: 1ms; }
+}
+.gachikoi-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  z-index: 12;
+  width: 37px;
+  padding: 2px;
+  border: 1px solid var(--avatar-tool-rail-border);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--avatar-tool-rail-bg) 42%, white 58%);
+  box-shadow: var(--avatar-tool-rail-shadow);
+  backdrop-filter: blur(14px) saturate(118%);
+  -webkit-backdrop-filter: blur(14px) saturate(118%);
+}
+.gachikoi-menu[hidden] { display: none; }
+html[data-theme="night"] .gachikoi-menu {
+  background: color-mix(in srgb, var(--avatar-tool-rail-bg) 76%, #1b1b32 24%);
+}
+#gachikoiBtn.is-active { color: var(--avatar-tool-voice); }
+#gachikoiBtn:hover { transform: none; }
+/* This submenu has one child: do not inherit the rail's last-child right alignment. */
+#gachikoiBtn[data-tooltip]::before {
+  left: 50%;
+  right: auto;
+  text-align: center;
+  transform: translate(-50%, -2px);
+}
+#gachikoiBtn[data-tooltip]:hover::before,
+#gachikoiBtn[data-tooltip]:focus-visible::before { transform: translate(-50%, 0); }
+#swayBtn { touch-action: manipulation; -webkit-touch-callout: none; }
+/* The expanded subbutton occupies the old tooltip area. */
+#swayBtn[aria-expanded="true"]::before,
+#swayBtn[aria-expanded="true"]::after { opacity: 0; visibility: hidden; }

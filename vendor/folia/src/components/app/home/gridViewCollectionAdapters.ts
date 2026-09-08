@@ -1,0 +1,339 @@
+import type React from 'react';
+import { LocalLibraryGroup, LocalSong, SongResult } from '../../../types';
+import { navidromeApi, getNavidromeConfig } from '../../../services/navidromeService';
+import { buildLocalQueue, buildNavidromeQueue } from '../../../services/playbackAdapters';
+import { SubsonicSong } from '../../../types/navidrome';
+import { isBlob } from '../../../utils/blobGuards';
+import { sortLocalFolderSongs } from '../../../utils/localSongSorting';
+import type { LocalLibraryAssignment, LocalLibraryEntity } from '../../../types/localLibrary';
+import type {
+    OnlineProviderId,
+    ProviderArtistSummary,
+    ProviderCollection,
+    ProviderUser,
+} from '../../../types/onlineMusic';
+import { buildLocalLibraryIndex, followEntityRedirect } from '../../../utils/localLibraryIndex';
+
+// src/components/app/home/gridViewCollectionAdapters.ts
+// Converts home-surface collections into small GridView descriptors and resolves non-Netease tracks outside GridView.
+
+export type GridViewCollectionSource = 'online' | 'local' | 'navidrome';
+export type NavidromeGridViewCollectionType = 'album' | 'playlist' | 'artist' | 'random' | 'favorites';
+
+export interface BaseGridViewCollectionDescriptor {
+    source: GridViewCollectionSource;
+    id: string | number;
+    name: string;
+    type: string;
+    coverUrl?: string;
+    description?: string;
+    trackCount?: number;
+    albumCount?: number;
+    isOwned?: boolean;
+    artists?: ProviderArtistSummary[];
+    aliases?: string[];
+    publishedAt?: number;
+    publisher?: string;
+    playCount?: number;
+    updatedAt?: number;
+    tracksUpdatedAt?: number;
+    isLiked?: boolean;
+    providerData?: ProviderCollection['providerData'];
+    creator?: ProviderUser;
+    albumArtist?: string;
+    albumYear?: number;
+    albumGenre?: string;
+    albumDuration?: number;
+    albumCompany?: string;
+    albumPublishTime?: number;
+}
+
+export interface LocalGridViewCollectionDescriptor extends BaseGridViewCollectionDescriptor {
+    source: 'local';
+    type: LocalLibraryGroup['type'];
+    id: string;
+    songIds: string[];
+    entityId?: string;
+    playlistId?: string;
+    isVirtual?: boolean;
+}
+
+export interface NavidromeGridViewCollectionDescriptor extends BaseGridViewCollectionDescriptor {
+    source: 'navidrome';
+    type: NavidromeGridViewCollectionType;
+    id: string;
+    editable?: boolean;
+}
+
+export interface OnlineGridViewCollectionDescriptor extends BaseGridViewCollectionDescriptor {
+    source: 'online';
+    providerId: OnlineProviderId;
+    raw?: any;
+}
+
+export type GridViewCollectionDescriptor =
+    | OnlineGridViewCollectionDescriptor
+    | LocalGridViewCollectionDescriptor
+    | NavidromeGridViewCollectionDescriptor;
+
+const getDisplayName = (name: React.ReactNode) => (
+    typeof name === 'string' || typeof name === 'number'
+        ? String(name)
+        : ''
+);
+
+// Returns the provider-normalized artist label used by collection overview cards.
+export const getProviderCollectionArtistLabel = (
+    collection: Pick<ProviderCollection, 'artists' | 'creator'> | null | undefined,
+): string => {
+    const artists = collection?.artists
+        ?.map(artist => artist.name.trim())
+        .filter(Boolean)
+        .join(', ');
+    return artists || collection?.creator?.nickname || '';
+};
+
+export const createNeteaseProviderUser = (user: ProviderUser | null | undefined): ProviderUser | null => user || null;
+
+export const createNeteaseGridViewCollection = (collection: ProviderCollection): GridViewCollectionDescriptor => (
+    createOnlineGridViewCollection(collection, 'netease')
+);
+
+export const createOnlineGridViewCollection = (
+    collection: any,
+    providerId: OnlineProviderId,
+): OnlineGridViewCollectionDescriptor => {
+    const creator = collection.creator;
+    return {
+        ...collection,
+        source: 'online',
+        providerId,
+        coverUrl: collection.coverUrl,
+        trackCount: collection.trackCount,
+        albumCount: collection.albumCount,
+        isOwned: collection.isOwned,
+        artists: collection.artists,
+        aliases: collection.aliases,
+        publishedAt: collection.publishedAt,
+        publisher: collection.publisher,
+        playCount: collection.playCount,
+        updatedAt: collection.updatedAt,
+        tracksUpdatedAt: collection.tracksUpdatedAt,
+        isLiked: collection.isLiked,
+        creator: creator ? { ...creator } : undefined,
+        raw: collection.raw || collection,
+    };
+};
+
+export const createLocalGridViewCollection = (group: LocalLibraryGroup): LocalGridViewCollectionDescriptor => ({
+    source: 'local',
+    id: group.id,
+    name: group.name,
+    type: group.type,
+    coverUrl: typeof group.coverUrl === 'string' ? group.coverUrl : undefined,
+    description: group.description,
+    trackCount: group.trackCount ?? group.songs.length,
+    songIds: group.songs.map(song => song.id),
+    ...(group.entityId ? { entityId: group.entityId } : {}),
+    playlistId: group.playlistId,
+    isVirtual: group.isVirtual,
+});
+
+export const createNavidromeGridViewCollection = (
+    item: {
+        id: string | number;
+        name: React.ReactNode;
+        coverUrl?: string;
+        description?: string;
+        trackCount?: number;
+        albumArtist?: string;
+        albumYear?: number;
+        albumGenre?: string;
+        albumDuration?: number;
+    },
+    type: NavidromeGridViewCollectionType
+): NavidromeGridViewCollectionDescriptor => ({
+    source: 'navidrome',
+    id: String(item.id),
+    name: getDisplayName(item.name),
+    type,
+    coverUrl: item.coverUrl,
+    description: item.description,
+    trackCount: item.trackCount,
+    albumArtist: item.albumArtist,
+    albumYear: item.albumYear,
+    albumGenre: item.albumGenre,
+    albumDuration: item.albumDuration,
+    publishedAt: item.albumYear ? new Date(item.albumYear, 0, 1).getTime() : undefined,
+    editable: Boolean((item as { editable?: boolean }).editable),
+});
+
+// Resolves the ordered, deduplicated artist entity names represented by a local album's songs.
+export const resolveLocalAlbumArtistDisplay = (
+    songIds: string[],
+    catalog: { entities: LocalLibraryEntity[]; assignments: LocalLibraryAssignment[]; },
+): string => {
+    const index = buildLocalLibraryIndex(catalog.entities, catalog.assignments);
+    const songIdSet = new Set(songIds);
+    const seenArtistIds = new Set<string>();
+    const names: string[] = [];
+
+    catalog.assignments.forEach(assignment => {
+        if (!songIdSet.has(assignment.songId)) return;
+        assignment.artistEntityIds.forEach(artistEntityId => {
+            const activeArtistId = followEntityRedirect(artistEntityId, index.entitiesById);
+            const artistEntity = activeArtistId ? index.entitiesById.get(activeArtistId) : undefined;
+            if (!artistEntity || artistEntity.kind !== 'artist' || seenArtistIds.has(artistEntity.id)) return;
+            seenArtistIds.add(artistEntity.id);
+            names.push(artistEntity.displayName);
+        });
+    });
+
+    return names.join(', ');
+};
+
+export const refreshLocalGridViewCollection = (
+    descriptor: LocalGridViewCollectionDescriptor,
+    localSongs: LocalSong[],
+    catalog?: { entities: LocalLibraryEntity[]; assignments: LocalLibraryAssignment[]; },
+): LocalGridViewCollectionDescriptor => {
+    if (descriptor.entityId && catalog) {
+        const index = buildLocalLibraryIndex(catalog.entities, catalog.assignments);
+        const entityId = followEntityRedirect(descriptor.entityId, index.entitiesById);
+        const entity = entityId ? index.entitiesById.get(entityId) : undefined;
+        if (!entity || entity.mergedInto) {
+            return { ...descriptor, songIds: [], trackCount: 0 };
+        }
+        const songIds = catalog.assignments
+            .filter(assignment => entity.kind === 'artist'
+                ? assignment.artistEntityIds.some(artistEntityId => (
+                    followEntityRedirect(artistEntityId, index.entitiesById) === entity.id
+                ))
+                : Boolean(assignment.albumEntityId && (
+                    followEntityRedirect(assignment.albumEntityId, index.entitiesById) === entity.id
+                )))
+            .map(assignment => assignment.songId);
+        const songIdSet = new Set(songIds);
+        const currentSongs = localSongs.filter(song => songIdSet.has(song.id));
+        const refreshedSongs = entity.kind === 'album' ? sortLocalFolderSongs(currentSongs) : currentSongs;
+        const albumArtist = entity.kind === 'album'
+            ? resolveLocalAlbumArtistDisplay(songIds, catalog)
+            : undefined;
+        return {
+            ...descriptor,
+            id: entity.id,
+            entityId: entity.id,
+            name: entity.displayName,
+            songIds: refreshedSongs.map(song => song.id),
+            trackCount: refreshedSongs.length,
+            ...(albumArtist ? { albumArtist, description: albumArtist } : {}),
+        };
+    }
+
+    if (descriptor.playlistId || descriptor.type !== 'folder') {
+        return descriptor;
+    }
+
+    const currentSongs = descriptor.isVirtual
+        ? localSongs
+        : localSongs.filter(song => song.folderName === descriptor.name);
+    const refreshedSongs = sortLocalFolderSongs(currentSongs);
+
+    return {
+        ...descriptor,
+        songIds: refreshedSongs.map(song => song.id),
+        trackCount: refreshedSongs.length,
+    };
+};
+
+// Rebuilds a local GridView queue from descriptor ids while preserving descriptor order.
+export const resolveLocalGridViewTracks = (
+    descriptor: LocalGridViewCollectionDescriptor,
+    localSongs: LocalSong[],
+    catalog?: { entities: LocalLibraryEntity[]; assignments: LocalLibraryAssignment[]; },
+): SongResult[] => {
+    const songsById = new Map(localSongs.map(song => [song.id, song]));
+    const orderedSongs = descriptor.songIds
+        .map(songId => songsById.get(songId))
+        .filter((song): song is LocalSong => Boolean(song));
+
+    return buildLocalQueue(orderedSongs, undefined, catalog) as SongResult[];
+};
+
+const getLocalGridViewCoverSource = (songs: LocalSong[]): Blob | string | undefined => {
+    const sortedSongs = [...songs].sort((a, b) => (b.addedAt || 0) - (a.addedAt || 0));
+    const preferredSong = sortedSongs.find(song => {
+        const hasEmbeddedCover = isBlob(song.embeddedCover);
+        if (song.useOnlineCover) {
+            return song.onlineMetadata?.coverUrl || hasEmbeddedCover;
+        }
+        return hasEmbeddedCover || song.onlineMetadata?.coverUrl;
+    });
+
+    if (!preferredSong) {
+        return undefined;
+    }
+
+    const embeddedCover = isBlob(preferredSong.embeddedCover) ? preferredSong.embeddedCover : undefined;
+    if (preferredSong.useOnlineCover) {
+        return preferredSong.onlineMetadata?.coverUrl || embeddedCover;
+    }
+
+    return embeddedCover || preferredSong.onlineMetadata?.coverUrl;
+};
+
+export const resolveLocalGridViewCoverSource = (
+    descriptor: LocalGridViewCollectionDescriptor,
+    localSongs: LocalSong[]
+): Blob | string | undefined => {
+    const songsById = new Map(localSongs.map(song => [song.id, song]));
+    const orderedSongs = descriptor.songIds
+        .map(songId => songsById.get(songId))
+        .filter((song): song is LocalSong => Boolean(song));
+
+    return getLocalGridViewCoverSource(orderedSongs);
+};
+
+// Loads Navidrome tracks for GridView without moving Navidrome service logic into GridView itself.
+export const resolveNavidromeGridViewTracks = async (
+    descriptor: NavidromeGridViewCollectionDescriptor
+): Promise<SongResult[]> => {
+    const config = getNavidromeConfig();
+    if (!config) {
+        return [];
+    }
+
+    let subsonicSongs: SubsonicSong[] = [];
+
+    if (descriptor.type === 'album') {
+        const albumDetail = await navidromeApi.getAlbum(config, descriptor.id);
+        subsonicSongs = albumDetail?.song || [];
+    } else if (descriptor.type === 'playlist') {
+        const playlistDetail = await navidromeApi.getPlaylist(config, descriptor.id);
+        subsonicSongs = playlistDetail?.entry || [];
+    } else if (descriptor.type === 'artist') {
+        const artistDetail = await navidromeApi.getArtist(config, descriptor.id);
+        const albums = artistDetail?.album || [];
+        const albumResults = await Promise.all(albums.map(album => navidromeApi.getAlbum(config, album.id)));
+        subsonicSongs = albumResults.flatMap(album => album?.song || []);
+    } else if (descriptor.type === 'random') {
+        subsonicSongs = await navidromeApi.getRandomSongs(config, 100);
+    } else if (descriptor.type === 'favorites') {
+        subsonicSongs = await navidromeApi.getStarred2(config);
+    }
+
+    const navidromeSongs = subsonicSongs.map(song => navidromeApi.toNavidromeSong(config, song));
+    return buildNavidromeQueue(navidromeSongs);
+};
+
+export const isLocalGridViewCollection = (
+    collection: GridViewCollectionDescriptor
+): collection is LocalGridViewCollectionDescriptor => collection.source === 'local';
+
+export const isNavidromeGridViewCollection = (
+    collection: GridViewCollectionDescriptor
+): collection is NavidromeGridViewCollectionDescriptor => collection.source === 'navidrome';
+
+export const isNeteaseGridViewCollection = (
+    collection: GridViewCollectionDescriptor
+) => collection.source === 'online' && collection.providerId === 'netease';

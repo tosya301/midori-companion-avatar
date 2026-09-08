@@ -1,0 +1,27 @@
+# User-owned runtime data and secrets
+.local/
+.env
+.env.*
+!.env.example
+config.local.json
+secrets/
+audio/generated/
+# Reinstallable dependencies and development outputs
+node_modules/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+coverage/
+.codegraph/
+.DS_Store
+Thumbs.db
+*.log
+# Isolated test artifacts (never release)
+test-results/
+playwright-report/
+artifacts/
+dist/
+*.bundle

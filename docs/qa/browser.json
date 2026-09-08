@@ -1,0 +1,242 @@
+{
+  "url": "http://127.0.0.1:5188",
+  "checks": [
+    "real static page, default art and SSE bridge loaded",
+    "real builtin WAV playback, advancing time, RMS and mouth response, stop control",
+    "both accepted human samples selectable and actually playable with exact labels",
+    "Agent final message appears through real HTTP → SSE; same request id deduplicated",
+    "uploaded WAV delivered and played; stop clears playing+queued speech, no late restart",
+    "new tab does not replay historical SSE/audio",
+    "unconfigured chat fails honestly and unlocks input",
+    "all seven avatar states retain original cycle and loaded assets",
+    "classic Gachi entry/exit and day/night/narrow rendered without runtime errors",
+    "floating music family swaps website target; label selects isolated Spotify context",
+    "real published original lyrics state + all 18 mode selections/iframe readiness",
+    "paused published clock hides lyric stage",
+    "help page and downloadable corresponding Folia source available"
+  ],
+  "modes": [
+    "green",
+    "white",
+    "black",
+    "swim",
+    "classic",
+    "lil",
+    "off"
+  ],
+  "lyrics": [
+    {
+      "key": "original:luminous",
+      "elements": 33,
+      "canvas": 1,
+      "text": "\n    \n      \n      \n      \n      \n\n      \n        \n          03 / 12\n          \n          ATMOSPHERIC / TIDAL\n        \n        原创验证文字 1原创验证文字 2原创验证文字 3原创验证文字 4原创验证文字 5原创验证文字 5\n    "
+    },
+    {
+      "key": "original:blueprint",
+      "elements": 33,
+      "canvas": 1,
+      "text": "\n    \n      \n      \n      \n      \n\n      \n        \n          04 / 12\n          \n          GEOMETRIC / IMPACT\n        \n        原创验证文字 2原创验证文字 3原创验证文字 4原创验证文字 5原创验证文字 6原创验证文字 6\n     "
+    },
+    {
+      "key": "original:cinema",
+      "elements": 33,
+      "canvas": 1,
+      "text": "\n    \n      \n      \n      \n      \n\n      \n        \n          05 / 12\n          \n          ANALOG / MELANCHOLY\n        \n        原创验证文字 3原创验证文字 4原创验证文字 5原创验证文字 6原创验证文字 7原创验证文字 7\n    "
+    },
+    {
+      "key": "original:pixel",
+      "elements": 33,
+      "canvas": 1,
+      "text": "\n    \n      \n      \n      \n      \n\n      \n        \n          06 / 12\n          \n          KAWAII / DIGITAL\n        \n        原创验证文字 4原创验证文字 5原创验证文字 6原创验证文字 7原创验证文字 8原创验证文字 8\n       "
+    },
+    {
+      "key": "original:cloud",
+      "elements": 33,
+      "canvas": 1,
+      "text": "\n    \n      \n      \n      \n      \n\n      \n        \n          07 / 12\n          \n          AIR / DIAGONAL\n        \n        原创验证文字 5原创验证文字 6原创验证文字 7原创验证文字 8原创验证文字 9原创验证文字 9\n        \n"
+    },
+    {
+      "key": "original:mindscape",
+      "elements": 33,
+      "canvas": 1,
+      "text": "\n    \n      \n      \n      \n      \n\n      \n        \n          07 / 12\n          \n          POSTER / INNER WORLD\n        \n        原创验证文字 5原创验证文字 6原创验证文字 7原创验证文字 8原创验证文字 9原创验证文字 9\n   "
+    },
+    {
+      "key": "folia:classic",
+      "elements": 79,
+      "canvas": 0,
+      "text": "\n    原原创创验验证证文文字字88原原创创验验证证文文字字99原创验证文字 10原创验证文字 11\n  \n\n"
+    },
+    {
+      "key": "folia:cadenza",
+      "elements": 24,
+      "canvas": 1,
+      "text": "\n    Stage · Now Playing等待外部输入请在本机启动 now-playing 服务，并确保播放器正在播放\n  \n\n"
+    },
+    {
+      "key": "folia:partita",
+      "elements": 21,
+      "canvas": 0,
+      "text": "\n    Stage · Now Playing等待外部输入请在本机启动 now-playing 服务，并确保播放器正在播放\n  \n\n"
+    },
+    {
+      "key": "folia:tilt",
+      "elements": 21,
+      "canvas": 0,
+      "text": "\n    Stage · Now Playing等待外部输入请在本机启动 now-playing 服务，并确保播放器正在播放\n  \n\n"
+    },
+    {
+      "key": "folia:fume",
+      "elements": 22,
+      "canvas": 1,
+      "text": "\n    Stage · Now Playing等待外部输入请在本机启动 now-playing 服务，并确保播放器正在播放\n  \n\n"
+    },
+    {
+      "key": "folia:monet",
+      "elements": 86,
+      "canvas": 1,
+      "text": "\n    MonetMonetMonetMidnight DefaultStage · Now Playing等待外部输入请在本机启动 now-playing 服务，并确保播放器正在播放\n  \n\n"
+    },
+    {
+      "key": "folia:claddagh",
+      "elements": 36,
+      "canvas": 0,
+      "text": "\n    原创验证文字 1原创验证文字 2\n  \n\n"
+    },
+    {
+      "key": "folia:pendolo",
+      "elements": 68,
+      "canvas": 1,
+      "text": "\n    原创验证文字 1原创验证文字 2原创验证文字 3原创验证文字 4原创验证文字 5原创验证文字 6原创验证文字 7\n  \n\n"
+    },
+    {
+      "key": "folia:diorama",
+      "elements": 19,
+      "canvas": 1,
+      "text": "\n    \n  \n\n"
+    },
+    {
+      "key": "folia:sonnet",
+      "elements": 21,
+      "canvas": 0,
+      "text": "\n    Stage · Now Playing等待外部输入请在本机启动 now-playing 服务，并确保播放器正在播放\n  \n\n"
+    },
+    {
+      "key": "folia:cappella",
+      "elements": 35,
+      "canvas": 0,
+      "text": "\n    无音轨\n                @keyframes cappella-char-fade {\n                    from { opacity: 0; }\n                    to { opacity: 1; }\n                }\n\n                @keyfram"
+    },
+    {
+      "key": "folia:tempera",
+      "elements": 22,
+      "canvas": 0,
+      "text": "\n    Stage · Now Playing等待外部输入请在本机启动 now-playing 服务，并确保播放器正在播放\n  \n\n"
+    }
+  ],
+  "pageErrors": [],
+  "networkFailures": [],
+  "externalRequests": [],
+  "health": {
+    "ok": true,
+    "runtime": "midori-public",
+    "version": 1
+  },
+  "audioSamples": [
+    {
+      "time": 0.069333,
+      "meter": "8%",
+      "mouth": "mouth mouth-closed"
+    },
+    {
+      "time": 0.138667,
+      "meter": "43%",
+      "mouth": "mouth mouth-half"
+    },
+    {
+      "time": 0.208,
+      "meter": "93%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 0.277333,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 0.346667,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 0.416,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 0.507078,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 0.624,
+      "meter": "62%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 0.72,
+      "meter": "52%",
+      "mouth": "mouth mouth-half"
+    },
+    {
+      "time": 0.789333,
+      "meter": "37%",
+      "mouth": "mouth mouth-half"
+    },
+    {
+      "time": 0.858667,
+      "meter": "27%",
+      "mouth": "mouth mouth-half"
+    },
+    {
+      "time": 0.928,
+      "meter": "39%",
+      "mouth": "mouth mouth-half"
+    },
+    {
+      "time": 0.997333,
+      "meter": "72%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 1.066667,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 1.136,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 1.205333,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 1.274667,
+      "meter": "100%",
+      "mouth": "mouth mouth-open"
+    },
+    {
+      "time": 1.344,
+      "meter": "84%",
+      "mouth": "mouth mouth-open"
+    }
+  ],
+  "classicGachi": {
+    "translate": "none",
+    "source": "./assets/sway/milky-green-v1.1-animated.svg"
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Midori Lyric Stage · Original</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-template="luminous" data-host-theme="night">
+    <main class="app-shell" id="app" aria-hidden="true">
+      <canvas class="fx-canvas" id="fxCanvas"></canvas>
+      <div class="artwork-field" id="artworkField"></div>
+      <div class="stage-grid"></div>
+      <div class="vignette"></div>
+
+      <section class="lyric-stage">
+        <div class="stage-index">
+          <span id="lineCounter">00 / 00</span>
+          <span class="index-rule"></span>
+          <span id="templateMood">ATMOSPHERIC / TIDAL</span>
+        </div>
+        <div class="lyric-stack" id="lyricStack"></div>
+        <div class="stage-microcopy">
+          <span>A SONG BECOMES A PLACE</span>
+          <span>REAL-TIME TYPOGRAPHIC SYSTEM</span>
+        </div>
+      </section>
+
+      <footer class="transport">
+        <div class="transport-meta">
+          <span id="transportState">IDLE</span>
+          <span id="timeCurrent">0:00</span>
+        </div>
+        <div class="progress-track"><span class="progress-fill" id="progressFill"></span></div>
+        <span id="timeDuration">0:00</span>
+      </footer>
+    </main>
+    <script type="module" src="./app.js?v=sample-age-v1"></script>
+  </body>
+</html>

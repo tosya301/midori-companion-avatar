@@ -1,0 +1,1 @@
+Read `AGENTS.md` and `AGENT_INTEGRATION.md` before adapting this project. This file is only a discoverability entrypoint for Claude Code; it does not replace the caller's persona or authorize account operations.

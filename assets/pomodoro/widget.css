@@ -1,0 +1,75 @@
+
+*{box-sizing:border-box} :host{color-scheme:dark;font-family:Arial,"Microsoft YaHei UI",sans-serif;color:#edf0ec}
+button,input{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:2px solid #c7f2cc;outline-offset:4px}button:disabled{cursor:default;opacity:.45}
+.clock{--ink:#fff;position:fixed;left:0;top:0;width:290px;height:290px;transform-origin:0 0;z-index:10;color:var(--ink);border-radius:32px;corner-shape:superellipse(1.25);user-select:none;touch-action:none;cursor:grab;isolation:isolate;-webkit-user-select:none}
+.clock:focus-visible{outline-offset:6px}
+/* Thin frosted widget material: the page supplies the tint, not a painted blue fill. */
+.glass{position:absolute;inset:0;border-radius:inherit;corner-shape:inherit;border:0;background:linear-gradient(155deg,rgba(255,255,255,.035),rgba(14,30,24,.065));box-shadow:0 6px 20px rgba(7,18,15,.075),inset 0 1px 0 rgba(255,255,255,.06);backdrop-filter:blur(22px) saturate(125%);-webkit-backdrop-filter:blur(22px) saturate(125%);pointer-events:none;overflow:hidden;transition:box-shadow 160ms ease}
+.glass::after{content:"";position:absolute;inset:0;padding:1px;border-radius:inherit;corner-shape:inherit;background:linear-gradient(140deg,rgba(255,255,255,.38),rgba(255,255,255,.08) 36%,rgba(255,255,255,.035) 63%,rgba(255,255,255,.26));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;pointer-events:none;transition:opacity 160ms ease}
+.clock.is-pending .glass,.clock.is-dragging .glass{box-shadow:0 8px 24px rgba(7,18,15,.12),inset 0 0 0 1px rgba(255,255,255,.16)}.clock.is-dragging{cursor:grabbing}.clock.is-scrubbing{cursor:crosshair}
+.resize-corner{position:absolute;z-index:20;width:calc(22px / var(--widget-scale,1));height:calc(22px / var(--widget-scale,1));touch-action:none}.resize-corner[data-resize-corner="nw"]{left:0;top:0;cursor:nwse-resize}.resize-corner[data-resize-corner="ne"]{right:0;top:0;cursor:nesw-resize}.resize-corner[data-resize-corner="sw"]{left:0;bottom:0;cursor:nesw-resize}.resize-corner[data-resize-corner="se"]{right:0;bottom:0;cursor:nwse-resize}.clock[data-resize="nw"],.clock[data-resize="se"]{cursor:nwse-resize}.clock[data-resize="ne"],.clock[data-resize="sw"]{cursor:nesw-resize}.clock.is-resizing .inline-field,.clock.is-resizing .ring-hit,.clock.is-resizing .clock-controls button{pointer-events:none}
+.face{position:absolute;left:20px;top:20px;width:250px;height:250px;pointer-events:none}
+.ring{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}.ring circle{fill:none}.track,.remaining{stroke-width:22}.track{stroke:#ffffff12}.remaining{stroke:var(--ink);stroke-linecap:round;transition:stroke 220ms ease}.ring-hit{stroke:transparent;stroke-width:32;pointer-events:stroke;cursor:grab;touch-action:none}.ring-hit:focus-visible{outline:none;stroke:#ffffff26}.is-scrubbing .ring-hit{cursor:crosshair}
+.ring .ring-handle{fill:var(--ink);stroke:#314637a0;stroke-width:2;opacity:0;pointer-events:none}.is-scrubbing .ring-handle,.ring:has(.ring-hit:focus-visible) .ring-handle{opacity:1}
+.inline-field{position:absolute;left:42px;right:42px;width:166px;height:32px;margin:0;padding:0 5px;border:1px solid transparent;border-radius:7px;background:transparent;color:var(--ink);text-align:center;font-family:Arial,"Microsoft YaHei UI",sans-serif;font-weight:700;pointer-events:auto;cursor:text;min-width:0;box-shadow:none;outline:none;transition:background-color 140ms ease,border-color 140ms ease;text-overflow:ellipsis;user-select:text;-webkit-user-select:text;touch-action:manipulation}
+.inline-field:hover{background:#111b1780;border-color:#ffffff1f}.inline-field:focus{background:#101a16ba;border-color:#d9efdc70;outline:0}.inline-field[aria-invalid="true"]{border-color:#eaa89b}
+.phase{top:66px;left:50%;right:auto;transform:translateX(-50%);field-sizing:content;width:auto;min-width:28px;max-width:142px;height:24px;padding:0 4px;font-size:18px;line-height:22px}.time{top:104px;left:50%;right:auto;transform:translateX(-50%);field-sizing:content;width:auto;min-width:36px;max-width:166px;height:46px;padding:0 3px;font-size:42px;line-height:44px;letter-spacing:1px;font-variant-numeric:tabular-nums}.rounds{top:158px;left:50%;right:auto;transform:translateX(-50%);field-sizing:content;width:auto;min-width:24px;max-width:110px;height:24px;padding:0 3px;font-size:16px;line-height:22px;font-variant-numeric:tabular-nums}
+.clock-controls{--control-width:52px;--control-height:24px;position:absolute;top:194px;left:0;right:0;display:flex;justify-content:center;gap:6px;opacity:0;transition:opacity 150ms ease;pointer-events:none}.clock.is-face-hovered .clock-controls,.clock-controls:has(button:focus-visible){opacity:1;pointer-events:auto}
+.clock-controls button{display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;flex:0 0 var(--control-width);width:var(--control-width);min-width:var(--control-width);max-width:var(--control-width);height:var(--control-height);min-height:var(--control-height);max-height:var(--control-height);padding:0;border:1px solid #ffffff35;border-radius:99px;background:#35423799;color:var(--ink);font-family:Arial,sans-serif;font-size:8.8px;font-weight:700;line-height:1;letter-spacing:0;text-align:center;pointer-events:inherit;touch-action:manipulation}.clock-controls button span{display:block;line-height:1;text-box:trim-both cap alphabetic;transform:translateY(1px);pointer-events:none}.clock-controls button:hover{background:#26382dcc}
+.clock.is-scrubbing .inline-field,.clock.is-dragging .inline-field,.clock.is-scrubbing .clock-controls button,.clock.is-dragging .clock-controls button{pointer-events:none}
+.quiet{color:inherit;border:1px solid #d1dec22b;background:transparent;padding:7px 12px;border-radius:6px;font-size:12px}.quiet:hover{background:#ffffff0d}.status{position:fixed;left:24px;bottom:90px;max-width:calc(100vw - 48px);font-size:12px;color:#e0e7dfb3;min-height:18px;margin:0;line-height:1.7;pointer-events:none}
+.clock-hint{position:absolute;bottom:9px;left:0;right:0;text-align:center;font-size:8px;letter-spacing:1px;color:#fff6;pointer-events:none;opacity:0;transition:opacity 150ms ease}.clock:hover .clock-hint,.clock:focus-visible .clock-hint{opacity:1}
+dialog{width:min(380px,calc(100vw - 32px));max-height:calc(100svh - 24px);overflow:auto;border:1px solid #b5c5b53b;border-radius:14px;padding:24px;background:#29322b;color:#e5eae3;box-shadow:0 20px 80px #0005}dialog::backdrop{background:#10181170;backdrop-filter:blur(4px)}form{display:grid;gap:16px}h2{margin:0;font-size:17px;font-weight:500}.field{display:grid;gap:8px;font-size:12px;color:#d0d9cd}.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}dialog input{min-width:0;width:100%;padding:10px 11px;border:1px solid #c3d3bf36;border-radius:6px;background:#ffffff08;color:#fff;font-size:14px}form p{font-size:11px;line-height:1.7;color:#aebcac;margin:0}.actions{display:flex;justify-content:flex-end;gap:9px}.save{background:#c7f2cc;color:#203825;border:0;padding:9px 13px;border-radius:6px;font-size:12px}.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@media(hover:none){.clock-controls{opacity:1;pointer-events:auto}.clock-hint{opacity:.8}.inline-field{background:#111b1720}.clock-controls{--control-height:28px}.ring-hit{stroke-width:36}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+:host{position:fixed;inset:0;z-index:72;pointer-events:none;font-size:16px}
+[hidden]{display:none!important}.clock{pointer-events:auto;opacity:1;filter:blur(0) saturate(1);transition:opacity 450ms ease,filter 450ms ease}
+.clock.is-stowing{opacity:0;filter:blur(7px) saturate(.78);pointer-events:none}
+.clock[inert] *{pointer-events:none!important}.status{position:absolute!important;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}
+dialog{pointer-events:auto}.clock-restore{position:fixed;top:clamp(14px,2vw,24px);right:calc(clamp(14px,2vw,24px) + 47.5px + 12px);width:28.5px;height:28.5px;min-height:0;padding:4.25px;border:0;border-radius:7px;display:flex;align-items:center;justify-content:center;background:transparent;color:#415a4b;pointer-events:auto;cursor:pointer;transition:background-color 140ms ease;box-shadow:none}
+.clock-restore svg{width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.clock-restore:hover{background:#3b5a4614}.clock-restore:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+/* Day WORK/BREAK use white; preserve the accepted Night teal palette. */
+:host([data-theme="night"]) .clock{--ink:#82c5bf}
+:host([data-theme="night"]) .clock .inline-field,:host([data-theme="night"]) .clock .clock-controls button,:host([data-theme="night"]) .clock .clock-hint{color:#82c5bf}
+:host([data-theme="night"]) .clock-restore{color:#eadfce;--avatar-tool-rail-border:rgba(171,196,232,.06)}:host([data-theme="night"]) .clock-restore:hover{background:#ffffff14}
+/* Same tooltip tokens, typography and motion as the existing avatar toolbar. */
+.clock-restore{--avatar-tool-rail-bg:rgba(255,255,255,.26);--avatar-tool-rail-border:rgba(57,104,72,.08)}
+.clock-restore[data-tooltip]::before {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 50%;
+  z-index: 60;
+  padding: 8px 11px;
+  border: 1px solid var(--avatar-tool-rail-border);
+  border-radius: 9px;
+  color: var(--muted);
+  background: color-mix(in srgb, var(--avatar-tool-rail-bg) 92%, transparent 8%);
+  box-shadow: 0 10px 28px rgba(31, 73, 47, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font-family: ui-rounded, "SF Pro Rounded", Nunito, "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, -2px);
+  transition: opacity 120ms ease, transform 120ms ease, visibility 120ms ease;
+}
+
+.clock-restore[data-tooltip]:hover::before,
+.clock-restore[data-tooltip]:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+:host([data-theme="night"]) .clock-restore[data-tooltip]::before {
+  color: #d3e2e2;
+  background: rgba(4, 17, 22, 0.72);
+  box-shadow: 0 12px 32px rgba(0, 4, 10, 0.17);
+}
