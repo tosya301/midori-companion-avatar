@@ -4803,7 +4803,7 @@
     },
     {
       "path": "scripts/package_release.py",
-      "sha256": "9e3416c0733c5cd2bb72eca0cbd23815b699eaec93a1ff41cad1b4236272fbda"
+      "sha256": "bc7f039805cfe4ddd0c2b10a11f849d303b79a2a6dc0c05ba588e23c6e1691e5"
     },
     {
       "path": "server.py",
@@ -8779,7 +8779,7 @@
     },
     {
       "path": "tests/test_public_packaging.py",
-      "sha256": "7d54a22540b058f30749e1ee05319e9ddba5ba741535fe422914ac1ff620ba32"
+      "sha256": "9944e233998ac66262b9315a1547ddf3de5bb0117d72e60fe83f256230f9f35f"
     }
   ]
 }

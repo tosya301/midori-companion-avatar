@@ -54,6 +54,17 @@ class PackagingTests(unittest.TestCase):
             self.assertEqual(receipt['archive_members'], 4)
             self.assertFalse(receipt['uploaded'])
             self.assertNotEqual(package().returncode, 0)
+            # Nested upstream ignore rules must not omit source-offer payload.
+            (root / 'docs').mkdir()
+            (root / 'docs/FOLIA_SOURCE_MANIFEST.json').write_text(json.dumps({'source_payload': [{'path': 'omitted-source.py'}]}))
+            (root / 'omitted-source.py').write_text('# Untracked source fixture\n')
+            git('add', 'docs/FOLIA_SOURCE_MANIFEST.json')
+            git('commit', '-m', 'incomplete source-offer fixture')
+            output = parent / 'incomplete.zip'
+            incomplete = package()
+            self.assertNotEqual(incomplete.returncode, 0)
+            self.assertIn('Corresponding-source file not committed', incomplete.stderr)
+            self.assertFalse(output.exists())
 
 
 if __name__ == '__main__':
