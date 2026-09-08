@@ -1,9 +1,9 @@
 {
-  "scope": "Payload present in successful clean-room test; hashes are not a claim of individual upstream file test coverage. Integration-map test was added and passed separately.",
+  "scope": "Payload present in successful clean-room test; hashes are not a claim of individual upstream file test coverage. Integration-map test was added and passed separately. Packaging script/attributes and packaging regression test were subsequently checked by the real packaging regression and release/restore checks.",
   "files": [
     {
       "path": ".gitattributes",
-      "sha256": "edecb996c4ac0bd40d644239408609f0908f4647320bbb1834da39a7f515ef41"
+      "sha256": "119435c405765054b5a9ff4da6d54df180acd37d492d379d703efed43e770c6e"
     },
     {
       "path": ".gitignore",
@@ -4803,7 +4803,7 @@
     },
     {
       "path": "scripts/package_release.py",
-      "sha256": "71e469607dc0eac35627cd49099d0e31eddb6282dcb036c1712b9ec66f39d483"
+      "sha256": "9e3416c0733c5cd2bb72eca0cbd23815b699eaec93a1ff41cad1b4236272fbda"
     },
     {
       "path": "server.py",
@@ -8776,6 +8776,10 @@
     {
       "path": "tests/integration-map.test.mjs",
       "sha256": "2514d3c50ae64db1a9dc6bfe77327a083bc2eb2a43a50cfaf231cbbc8fea773d"
+    },
+    {
+      "path": "tests/test_public_packaging.py",
+      "sha256": "7d54a22540b058f30749e1ee05319e9ddba5ba741535fe422914ac1ff620ba32"
     }
   ]
 }

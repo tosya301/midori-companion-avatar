@@ -20,6 +20,22 @@ def package(output):
         raise SystemExit('Commit the reviewed tracked files before packaging.')
     revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip()
     paths = sorted(subprocess.check_output(['git', 'ls-files', '-z'], cwd=ROOT).decode().strip('\0').split('\0'))
+    # A clean git status can hide newline-filter differences. Hash raw working
+    # bytes without filters, then compare with the committed object IDs.
+    committed = {}
+    for record in subprocess.check_output(['git', 'ls-tree', '-rz', 'HEAD'], cwd=ROOT).split(b'\0'):
+        if record:
+            metadata, name = record.split(b'\t', 1)
+            mode, kind, object_id = metadata.split()
+            if kind != b'blob' or mode not in {b'100644', b'100755'}:
+                raise SystemExit('Only committed regular files can be packaged.')
+            committed[name.decode()] = object_id.decode()
+    raw_ids = subprocess.check_output(['git', 'hash-object', '--no-filters', '--stdin-paths'], cwd=ROOT, input=('\n'.join(paths) + '\n').encode()).decode().splitlines()
+    if set(committed) != set(paths) or len(raw_ids) != len(paths):
+        raise SystemExit('Committed file set differs from package selection.')
+    mismatches = [name for name, object_id in zip(paths, raw_ids) if committed[name] != object_id]
+    if mismatches:
+        raise SystemExit(f'Committed bytes differ from working files: {len(mismatches)} file(s). Preserve raw bytes before packaging.')
     manifest = []
     for name in paths:
         p = PurePosixPath(name)
