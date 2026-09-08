@@ -131,6 +131,10 @@ async function post(route,body){
     await post('/api/lyrics/state',lyrics);
     await p.evaluate(()=>window.__midoriSpotifyLyricsDebug.wake());
     await p.waitForFunction(()=>document.querySelector('#spotifyLyricsLayer').dataset.active==='true');
+    // The restored draggable clock can overlap the expanded mode menu. Move it
+    // through its supported keyboard controls rather than bypassing pointer checks.
+    await p.locator('#midoriPomodoro').locator('#clock').focus();
+    for(let i=0;i<40;i++)await p.keyboard.press('ArrowRight');
     const modes=await p.evaluate(()=>window.__midoriSpotifyLyricsDebug.modes);
     assert.equal(modes.length,18);
     for(const item of modes){
