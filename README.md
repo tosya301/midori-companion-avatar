@@ -12,7 +12,7 @@
 python server.py
 ```
 
-Windows 也可双击 `start.bat`；macOS/Linux 可运行 `sh start.sh`（或使用 `python3 server.py`）。打开 http://127.0.0.1:5178/。
+Windows 也可双击 `start.bat`；macOS/Linux 可运行 `sh start.sh`（或使用 `python3 server.py`）。打开 http://127.0.0.1:5178/
 
 1. 可以先切换日夜主题、立绘和漂浮图标。
 2. 点「启动直播播放」允许本页播放后续音频。
