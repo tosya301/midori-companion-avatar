@@ -1,0 +1,52 @@
+{
+  "calibration": {
+    "width": "1914",
+    "height": "1989",
+    "viewBox": "-10.569900886802 17.650234741784 1910.006259780908 1984.849765258216"
+  },
+  "assets": [
+    {
+      "file": "companion-mouth.mjs",
+      "source_package": "milky-green-v4-e9-windows-handoff",
+      "source_sha256": "68e8627d6e4b5b7ee7cfd7637ab551440fbebc119b31c94f6dffe2998311834f",
+      "sha256": "68e8627d6e4b5b7ee7cfd7637ab551440fbebc119b31c94f6dffe2998311834f",
+      "changes": "byte-identical"
+    },
+    {
+      "file": "companion-expressions.mjs",
+      "source_package": "milky-green-v4-e9-windows-handoff",
+      "source_sha256": "1fe8c07699504ecaec1873a19159741de0fdd3c220ac4ee2975db9aa9631e8b4",
+      "sha256": "1fe8c07699504ecaec1873a19159741de0fdd3c220ac4ee2975db9aa9631e8b4",
+      "changes": "byte-identical"
+    },
+    {
+      "file": "mouth-rig.json",
+      "source_package": "milky-green-v4-e9-windows-handoff",
+      "source_sha256": "1648089cb0f275b40d188921a4bf3e69bf5b044dca57a3eaea1e834052c90b24",
+      "sha256": "8dde072c19e036e5d34388e6eb6df9650978570628d3eabb2f08522b21a4eaf9",
+      "changes": "public-safe provenance path basenames only"
+    },
+    {
+      "file": "expression-rig.json",
+      "source_package": "milky-green-v4-e9-windows-handoff",
+      "source_sha256": "e5c48db2496d6f0995fadd0c05d6231ddf9495da7a29c2a92a3d51a1ce7bad74",
+      "sha256": "c64af8f8908ae14f6c528d53a040df0c8eecfca8ef3bfcb755845203c35eb37d",
+      "changes": "public-safe provenance path basenames only"
+    },
+    {
+      "file": "smile-keyframes.json",
+      "source_package": "v4-r4",
+      "source_sha256": "2663e0f4560386482090322b8819c865787dcd8a0b1573b7bf6ab388b441f63e",
+      "sha256": "ca4c838c1e1bf8460023bd0e62b014c3806adf6a79d5bc7797fdf9901fd002ea",
+      "changes": "public-safe provenance path basenames only"
+    },
+    {
+      "file": "avatar.svg",
+      "source_package": "milky-green-v4-e9-windows-handoff",
+      "source_file": "milky-green-v4-talking.svg",
+      "source_sha256": "ff7b84f9f33e708eaca41494f260791b14c6648201364aa7ce5ed73dd8e14444",
+      "sha256": "94c0a32780e0b2bda06b4f86a66933ba4224ac1583a7899316630678e32f2e22",
+      "changes": "Only root width, height and viewBox match accepted v4-r4 combined.svg; all other bytes unchanged"
+    }
+  ]
+}

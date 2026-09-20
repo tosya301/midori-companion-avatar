@@ -15,7 +15,7 @@ async function post(route,body={}) { const r=await fetch(BASE+route,{method:'POS
   p.on('pageerror',e=>report.errors.push(e.message));
   const completed=()=>p.evaluate(k=>localStorage.getItem(k),KEY);
   await p.goto(BASE);await p.waitForFunction(()=>!document.querySelector('#sampleSelect').disabled&&document.querySelector('#bridgeStatus').textContent.includes('online'));
-  assert.match(await p.title(),/Midori Companion Avatar 0\.1/);assert.equal(await completed(),null);
+  assert.match(await p.title(),/Midori Companion Avatar 0\.2\.0/);assert.equal(await completed(),null);
   await p.screenshot({path:path.join(OUT,'before.png')});
   const controls=await p.locator('.controls button').allTextContents();
   await p.click('#unlockBtn');await p.click('#playBtn');await p.waitForFunction(()=>document.querySelector('#audio').currentTime>0.15);assert.equal(await completed(),null);await p.click('#stopBtn');

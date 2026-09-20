@@ -23,7 +23,7 @@ async function post(route,body){
     p.on('request',r=>{if(!r.url().startsWith(BASE)&&/^https?:/.test(r.url()))report.externalRequests.push(r.url());});
     await p.goto(BASE+'/',{waitUntil:'domcontentloaded'});
     await p.waitForFunction(()=>document.querySelector('#bridgeStatus').textContent.includes('online'));
-    assert.match(await p.title(),/Midori Companion Avatar 0\.1/);
+    assert.match(await p.title(),/Midori Companion Avatar 0\.2\.0/);
     await p.waitForFunction(()=>document.querySelector('#avatarFrame').naturalWidth>0);
     await p.screenshot({path:path.join(OUT,'desktop-light.png')});
     report.checks.push('real static page, default art and SSE bridge loaded');
