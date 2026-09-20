@@ -122,7 +122,8 @@ async function post(route,body){
     assert.equal(await music.getAttribute('data-family-current'),'applemusic');
     assert.equal(await music.locator('.site-icon-target').getAttribute('href'),'https://music.apple.com/');
     await music.locator('.family-expander').press('Enter');await p.locator('.family-option[data-app="spotify"]').press('Enter');await p.waitForTimeout(650);
-    const labelBox=await music.locator('.site-icon-label').boundingBox();assert(labelBox);await p.mouse.click(labelBox.x+labelBox.width/2,labelBox.y+labelBox.height/2);
+    // Use the semantic button: a cached bounding box can miss a drifting icon.
+    await music.locator('.site-icon-context').press('Enter');
     await p.waitForFunction(()=>document.querySelector('#midoriInputDock').dataset.context==='spotify');
     assert.equal(await p.locator('#midoriInputDock').getAttribute('data-context'),'spotify');
     report.checks.push('floating music family swaps website target; label selects isolated Spotify context');
