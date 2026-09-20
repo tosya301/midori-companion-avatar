@@ -116,20 +116,27 @@ async function post(route,body){
     report.checks.push('classic Gachi entry/exit and day/night/narrow rendered without runtime errors');
 
     await p.setViewportSize({width:1440,height:1000});
+    // Publish before selecting context so the first poll cannot race an idle
+    // response, and the local audition prompt correctly sees connected music.
+    const lyrics={request_id:randomUUID(),track:{id:'public-test-original',title:'Original Test Lines',artist:'Demo',album:'Offline test',durationMs:60000,artworkUrl:''},playback:{isPlaying:true,state:'playing',positionMs:3500,sampledAtMs:Date.now()},lyrics:{status:'ready',source:'original-demo',lines:Array.from({length:12},(_,i)=>({timeMs:i*4000,text:`原创验证文字 ${i+1}`}))}};
+    await post('/api/lyrics/state',lyrics);
     const music=p.locator('[data-family="music"]');
     await music.locator('.family-expander').press('Enter');
-    await p.locator('.family-option[data-app="applemusic"]').press('Enter');await p.waitForTimeout(650);
+    await p.locator('.family-option[data-app="applemusic"]').press('Enter');
+    await p.waitForFunction(()=>{const g=document.querySelector('[data-family="music"]');return g.dataset.familyCurrent==='applemusic'&&g.dataset.familyOpen==='false'});
     assert.equal(await music.getAttribute('data-family-current'),'applemusic');
     assert.equal(await music.locator('.site-icon-target').getAttribute('href'),'https://music.apple.com/');
-    await music.locator('.family-expander').press('Enter');await p.locator('.family-option[data-app="spotify"]').press('Enter');await p.waitForTimeout(650);
+    await music.locator('.family-expander').press('Enter');
+    await p.waitForFunction(()=>document.querySelector('[data-family="music"]').dataset.familyOpen==='true');
+    await p.locator('.family-option[data-app="spotify"]').press('Enter');
+    await p.waitForFunction(()=>{const g=document.querySelector('[data-family="music"]');return g.dataset.familyCurrent==='spotify'&&g.dataset.familyOpen==='false'});
     // Use the semantic button: a cached bounding box can miss a drifting icon.
     await music.locator('.site-icon-context').press('Enter');
     await p.waitForFunction(()=>document.querySelector('#midoriInputDock').dataset.context==='spotify');
     assert.equal(await p.locator('#midoriInputDock').getAttribute('data-context'),'spotify');
     report.checks.push('floating music family swaps website target; label selects isolated Spotify context');
 
-    const lyrics={request_id:randomUUID(),track:{id:'public-test-original',title:'Original Test Lines',artist:'Demo',album:'Offline test',durationMs:60000,artworkUrl:''},playback:{isPlaying:true,state:'playing',positionMs:3500,sampledAtMs:Date.now()},lyrics:{status:'ready',source:'original-demo',lines:Array.from({length:12},(_,i)=>({timeMs:i*4000,text:`原创验证文字 ${i+1}`}))}};
-    await post('/api/lyrics/state',lyrics);
+
     await p.evaluate(()=>window.__midoriSpotifyLyricsDebug.wake());
     await p.waitForFunction(()=>document.querySelector('#spotifyLyricsLayer').dataset.active==='true');
     // The restored draggable clock can overlap the expanded mode menu. Move it
