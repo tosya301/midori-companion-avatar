@@ -5234,9 +5234,9 @@ async function setSwayMode(nextMode) {
   image.setAttribute('aria-hidden', 'true');
   try {
     if (next === 'green' || config.talking) {
-      // E9 owns only the green outfit; little-Midori keeps its accepted controller.
+      // Latest-three owns only green; little-Midori keeps its accepted controller.
       const { createTalkingSway } = next === 'green'
-        ? await import('./assets/sway/v4-e9/sway-expressions.mjs?v=e9-queue-1')
+        ? await import('./assets/sway/v4-latest-three/sway-expressions.mjs?v=latest-three-preview-1')
         : await import('./assets/sway/v4-r4/sway-mouth.mjs?v=stable-owner-2');
       candidate = await createTalkingSway({
         audio, readEnergy: audioLevel, contextRunning: () => audioCtx?.state === 'running', boundsSrc: config.src,

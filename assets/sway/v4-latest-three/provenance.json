@@ -1,0 +1,83 @@
+{
+  "source_package": "milky-green-v4-latest-three-windows.zip",
+  "scope": "Accepted latest-three runtime for public release 0.2.1",
+  "files": [
+    {
+      "file": "asleep.svg",
+      "accepted_runtime_sha256": "70b121d814743247c484400cf1c534f2da51cbd53f564c9dcc6f83c099d8a76a",
+      "public_sha256": "70b121d814743247c484400cf1c534f2da51cbd53f564c9dcc6f83c099d8a76a",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "closed-reference.svg",
+      "accepted_runtime_sha256": "c8eaa48cda31e11697e2c29564b0a8dce09b347e0fe641574ecf852e1f007a7b",
+      "public_sha256": "c8eaa48cda31e11697e2c29564b0a8dce09b347e0fe641574ecf852e1f007a7b",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "companion-expressions.mjs",
+      "accepted_runtime_sha256": "1fe8c07699504ecaec1873a19159741de0fdd3c220ac4ee2975db9aa9631e8b4",
+      "public_sha256": "1fe8c07699504ecaec1873a19159741de0fdd3c220ac4ee2975db9aa9631e8b4",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "companion-mouth.mjs",
+      "accepted_runtime_sha256": "68e8627d6e4b5b7ee7cfd7637ab551440fbebc119b31c94f6dffe2998311834f",
+      "public_sha256": "68e8627d6e4b5b7ee7cfd7637ab551440fbebc119b31c94f6dffe2998311834f",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "expression-rig.json",
+      "accepted_runtime_sha256": "e5c48db2496d6f0995fadd0c05d6231ddf9495da7a29c2a92a3d51a1ce7bad74",
+      "public_sha256": "c64af8f8908ae14f6c528d53a040df0c8eecfca8ef3bfcb755845203c35eb37d",
+      "sanitized_metadata": [
+        "closed_smile_source.path"
+      ]
+    },
+    {
+      "file": "latest-eyes.mjs",
+      "accepted_runtime_sha256": "816964b32de09bf8297fa9016935f0943ea7bee9228668b13389bb788fb0702f",
+      "public_sha256": "816964b32de09bf8297fa9016935f0943ea7bee9228668b13389bb788fb0702f",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "milky-green-v4-talking.svg",
+      "accepted_runtime_sha256": "94c0a32780e0b2bda06b4f86a66933ba4224ac1583a7899316630678e32f2e22",
+      "public_sha256": "94c0a32780e0b2bda06b4f86a66933ba4224ac1583a7899316630678e32f2e22",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "mouth-rig.json",
+      "accepted_runtime_sha256": "1648089cb0f275b40d188921a4bf3e69bf5b044dca57a3eaea1e834052c90b24",
+      "public_sha256": "8dde072c19e036e5d34388e6eb6df9650978570628d3eabb2f08522b21a4eaf9",
+      "sanitized_metadata": [
+        "accepted_avatar_svg",
+        "source_svg"
+      ]
+    },
+    {
+      "file": "reference-wink.mjs",
+      "accepted_runtime_sha256": "259654d6eb26199efc02561bf9bf85e69b19f9579f49d30de65b1582fcff90bf",
+      "public_sha256": "259654d6eb26199efc02561bf9bf85e69b19f9579f49d30de65b1582fcff90bf",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "sleepy-cycle.mjs",
+      "accepted_runtime_sha256": "ac291850e405890be8c178732711e7caa68fca6adfd0979906af0e4252d961e4",
+      "public_sha256": "ac291850e405890be8c178732711e7caa68fca6adfd0979906af0e4252d961e4",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "smile.svg",
+      "accepted_runtime_sha256": "c3bf0bb5a1804a34d6f42fbab98fc85aa2b08f54c85fd731a8de66dd5400ffa8",
+      "public_sha256": "c3bf0bb5a1804a34d6f42fbab98fc85aa2b08f54c85fd731a8de66dd5400ffa8",
+      "sanitized_metadata": []
+    },
+    {
+      "file": "sway-expressions.mjs",
+      "accepted_runtime_sha256": "c58bbf0937b8b8c9f0447f050723dc74bdca00d7bbe5d956f34c461c20249189",
+      "public_sha256": "c58bbf0937b8b8c9f0447f050723dc74bdca00d7bbe5d956f34c461c20249189",
+      "sanitized_metadata": []
+    }
+  ]
+}
